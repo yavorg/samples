@@ -1,0 +1,9 @@
+node_modules
+server.js.logs
+server.js.debug
+settings.json
+local_package.csx
+cloud_package.cspkg
+*~
+vendor
+composer.lock

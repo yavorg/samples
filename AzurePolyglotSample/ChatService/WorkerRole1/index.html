@@ -1,0 +1,81 @@
+<html>
+	<body>
+		<p>Your web browser needs to support WebSocket for chat to work</p>
+		<input id="userName" />
+		<button id="connect">Connect</button>
+		<hr />
+		<ul id="messages">
+		</ul>
+		<input id="messageText" disabled="disabled" />
+		<button id="send" disabled="disabled">Send</button>
+		<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+		  var socket; 
+
+		  function showMessage(from, body){
+			$('#messages').append($('<li>[' + from + ']:&nbsp;' + body + '</li>'));
+		  }
+
+		  function submitMessage() {
+		  	var msg = $('#messageText').val();
+		  	socket.send(msg);
+		  }
+
+		  $('#send').click(function(e){
+			e.preventDefault();
+		    submitMessage();
+		  });
+
+		  $('#messageText').keypress(function(e) {
+		    if(e.which == 13)
+		      submitMessage();
+		  });
+
+		  function establishConnection(){
+		  	var userName = $('#userName').val();
+
+		  	if(userName){
+		  		$('#messageText').prop('disabled', false);
+			  	$('#send').prop('disabled', false);
+			  	$('#userName').prop('disabled', true);
+			  	$('#connect').prop('disabled', true);
+			  	socket = io.connect();	
+
+				socket.on('connect', function () {
+					socket.emit('setname', userName);
+					$('#messages').append('<li>You have joined the party</li>');
+				});
+
+				socket.on('announcement', function(data) {
+					$('#messages').append($('<li>ANNOUNCEMENT: ' + data.announcement + '</li>'));
+				});
+				
+				socket.on('message', function (data) {
+			  		showMessage(data.message[0], data.message[1]);
+			  	});	
+
+			  	socket.on('messages', function (data) {
+			  		for (var i=0; i<data.buffer.length; i++) {
+			  			showMessage(data.buffer[i].message[0], 
+			  				data.buffer[i].message[1]);
+			    	} 
+			  	});
+		  	}
+		  }
+
+		  $('#userName').keypress(function(e) {
+		    if(e.which == 13)
+		      establishConnection();
+		  });
+
+		  $('#connect').click(function(e){
+		  	e.preventDefault();
+		  	establishConnection();
+		  });
+
+
+		</script>
+	</body>
+</html>
+

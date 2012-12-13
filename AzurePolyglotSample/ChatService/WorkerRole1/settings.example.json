@@ -1,0 +1,6 @@
+{
+    "azure": {
+        "serviceBusNamespace": "{your Azure Service Bus namespace}",
+        "serviceBusAccessKey": "{your Azure Service Bus access key}"
+    }
+}
