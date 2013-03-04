@@ -50,5 +50,5 @@ function appendLastTweetId(url, callback){
 
 function filterOutTweet(tweet){
     // Remove retweets and replies
-    return !((tweet.text.indexOf('RT')  !== 0) && (tweet.to_user_id === 0));
+    return (tweet.text.indexOf('RT') === 0 || tweet.to_user_id);
 }
