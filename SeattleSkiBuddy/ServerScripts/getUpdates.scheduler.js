@@ -41,7 +41,7 @@ function appendLastTweetId(url, callback){
     .orderByDescending('twitterId')
     .read({success: function readUpdates(updates){
         if(updates.length){
-            callback(url + '&since_id=' + updates[0].twitterId + 1);
+            callback(url + '&since_id=' + (updates[0].twitterId + 1));
         } else {
             callback(url);
         }
