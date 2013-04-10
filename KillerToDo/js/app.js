@@ -36,7 +36,11 @@
         var textbox = $('#new-item-text'),
             itemText = textbox.val();
         if (itemText !== '') {
-            todoItemTable.insert({ text: itemText, complete: false }).then(refreshTodoItems);
+            todoItemTable.insert({ text: itemText, complete: false }).then(
+                refreshTodoItems,
+                function(error){
+                    alert(JSON.parse(error.request.responseText).error);
+                });
         }
         textbox.val('').focus();
         evt.preventDefault();
