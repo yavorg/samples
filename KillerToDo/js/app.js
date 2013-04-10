@@ -5,7 +5,7 @@
     // Read current data and rebuild UI.
     // If you plan to generate complex UIs like this, consider using a JavaScript templating library.
     function refreshTodoItems() {
-        var query = todoItemTable.where({ complete: false });
+        var query = todoItemTable.where({ complete: false }).skip(skip*take).take(take).includeTotalCount();
 
         query.read().then(function(todoItems) {
             var listItems = $.map(todoItems, function(item) {
@@ -17,7 +17,8 @@
             });
 
             $('#todo-items').empty().append(listItems).toggle(listItems.length > 0);
-            $('#summary').html('<strong>' + todoItems.length + '</strong> item(s)');
+            $('#summary').html('Showing page <strong>' + (skip + 1) + '</strong> out of ' +
+                '<strong>' + Math.ceil(todoItems.totalCount / take) + '</strong>');
         });
     }
 
@@ -50,6 +51,22 @@
     // Handle delete
     $(document.body).on('click', '.item-delete', function () {
         todoItemTable.del({ id: getTodoItemId(this) }).then(refreshTodoItems);
+    });
+
+    // Handle paging
+    var skip = 0,
+    take = 3;
+
+    $('#next').click(function(){
+        skip++;
+        refreshTodoItems();
+    });
+
+    $('#prev').click(function(){
+        if(skip !== 0){
+            skip--;
+            refreshTodoItems();
+        }
     });
 
     // On initial load, start by fetching the current data

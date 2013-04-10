@@ -29,6 +29,10 @@ header h2 { text-transform: uppercase; font-weight: normal; color: white; font-s
 .item-text { width: 100%; height: 26px; line-height: 24px; border: 1px solid transparent; background-color: transparent; }
 .item-text:focus, .item-text:hover { border-color: #aaa; background-color: #FFC; }
 
+/* Paging area */
+.section { text-align: center; padding-top: 10px; padding-bottom: 10px; }
+#prev, #next  { padding: 0 10px; height: 100%; border-radius: 4px; height: 40px; }
+
 /* Footer */
 footer { text-align: center; font-size: 0.8em; margin-top: 20px; }
 footer a { color: #666; }
