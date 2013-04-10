@@ -4,6 +4,7 @@ function insert(item, user, request) {
             error: "You're not allowed to talk about this in Las Vegas"
         });
     } else {
+    	item.userId = user.userId;
         request.execute();
     }
 }
