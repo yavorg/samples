@@ -89,6 +89,41 @@
         evt.preventDefault();
     });
 
-    // On initial load, start by fetching the current data
-    refreshTodoItems();
+    // Handle auth
+    function refreshAuthDisplay() {
+        var isLoggedIn = client.currentUser !== null;
+        $('#logged-in').toggle(isLoggedIn);
+        $('#logged-out').toggle(!isLoggedIn);
+
+
+        if (isLoggedIn) {
+            var facebookId = client.currentUser.userId.split(':')[1],
+                facebookGraphUri = 'http://graph.facebook.com/' + facebookId + '/';
+            $('#login-picture').attr('src', facebookGraphUri + 'picture?type=square');
+            $.get(facebookGraphUri + '?fields=name', function(result){
+                $('#login-name').text(result.name);
+            })
+            refreshTodoItems();
+        }
+    }
+
+
+    function logIn() {
+        client.login('facebook').then(refreshAuthDisplay, function(error){
+            alert('Error during login: ' + error);
+        });
+    }
+
+
+    function logOut() {
+        client.logout();
+        refreshAuthDisplay();
+        $('#todo-items').empty();
+        $('#summary').html('<strong>You must login to access data.</strong>');
+    }
+    
+    refreshAuthDisplay();
+    $('#summary').html('<strong>You must login to access data.</strong>');          
+    $("#logged-out button").click(logIn);
+    $("#logged-in button").click(logOut);
 });

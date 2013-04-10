@@ -36,6 +36,11 @@ header h2 { text-transform: uppercase; font-weight: normal; color: white; font-s
 /* Filter */
 #query-filter { width: 100%; height: 40px; border: 1px solid #999; font-size: 1em; border-radius: 4px; font-size: 1.1em}
 
+/* Auth */
+.auth { padding-top: 10px; padding-bottom: 10px;}
+.auth button { padding: 0 10px; height: 100%; border-radius: 4px; height: 40px; }
+.auth img {vertical-align: middle;}
+
 /* Footer */
 footer { text-align: center; font-size: 0.8em; margin-top: 20px; }
 footer a { color: #666; }

@@ -19,6 +19,15 @@
                     <form id='query'>
                         <input type='text' id='query-filter' placeholder='Starts with' />
                     </form>
+                    <div id='logged-in' class='auth'>
+                        You are logged in as <span id='login-name'></span>.
+                        <img id='login-picture' />
+                        <button id='log-out'>Log out</button>
+                    </div>
+                    <div id='logged-out' class='auth'>
+                        You are not logged in.
+                        <button>Log in</button>
+                    </div>
                 </header>
 
                 <ul id='todo-items'></ul>
