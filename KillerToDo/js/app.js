@@ -126,4 +126,11 @@
     $('#summary').html('<strong>You must login to access data.</strong>');          
     $("#logged-out button").click(logIn);
     $("#logged-in button").click(logOut);
+
+    // Pusher support
+    var pusher = new Pusher('20b0fbcf18822724d672'),
+        channel = pusher.subscribe('todo');
+
+    channel.bind('refresh', refreshTodoItems);
+
 });
