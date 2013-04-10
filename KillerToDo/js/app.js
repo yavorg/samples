@@ -5,7 +5,12 @@
     // Read current data and rebuild UI.
     // If you plan to generate complex UIs like this, consider using a JavaScript templating library.
     function refreshTodoItems() {
-        var query = todoItemTable.where({ complete: false }).skip(skip*take).take(take).includeTotalCount();
+        var filter = $('#query-filter')
+        var query = todoItemTable.where(function(val){
+                return this.complete == false &&
+                this.text.indexOf(val) == 0;
+            }, filter.val())
+            .skip(skip*take).take(take).includeTotalCount();
 
         query.read().then(function(todoItems) {
             var listItems = $.map(todoItems, function(item) {
@@ -67,6 +72,17 @@
             skip--;
             refreshTodoItems();
         }
+    });
+
+    // Handle filtering
+     $('#query').submit(function(evt) {
+        var textbox = $('#query-filter'),
+            itemText = textbox.val();
+        if (itemText !== '') {
+            refreshTodoItems();
+        }
+        textbox.val('').focus();
+        evt.preventDefault();
     });
 
     // On initial load, start by fetching the current data
