@@ -1,5 +1,7 @@
 ﻿$(function() {
-    var client = new WindowsAzure.MobileServiceClient('https://killertodo.azure-mobile.net/', 'ZvGUzoaSYszaIdPTNsWDrQzSEDJvcA98'),
+    var client = new WindowsAzure.MobileServiceClient(
+        '{get from portal}', 
+        '{get from portal}'),
         todoItemTable = client.getTable('todoitem');
 
     // Read current data and rebuild UI.

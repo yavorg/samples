@@ -1,9 +1,9 @@
 var Pusher = require('pusher'),
 	pusher = new Pusher(
 	{
-		appId: '41446',
-		key: '20b0fbcf18822724d672',
-		secret: '24a044b957aa9aefcb13'
+        appId: '{get from portal}',
+        key: '{get from portal}',
+        secret: '{get from portal}'
 	});
 
 
