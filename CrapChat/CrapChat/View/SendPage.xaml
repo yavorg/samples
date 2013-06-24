@@ -6,6 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -42,15 +43,24 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Image Source="{Binding Image}" Grid.Row="0" Grid.Column="0" Stretch="Uniform" />
-            <phone:LongListSelector Grid.Row="1" Grid.Column="0" 
-                                    ItemsSource="{Binding Friends}">
-                <phone:LongListSelector.ItemTemplate>
+            <toolkit:ListPicker  Grid.Row="1" Grid.Column="0"
+                                 ItemsSource="{Binding Friends}"
+                                 IsEnabled="{Binding HaveFriends}"
+                                 SelectedItem="{Binding SelectedFriend, Mode=TwoWay}">
+                <toolkit:ListPicker.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
-                </phone:LongListSelector.ItemTemplate>
-            </phone:LongListSelector>
+                </toolkit:ListPicker.ItemTemplate>
+                <toolkit:ListPicker.FullModeItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </toolkit:ListPicker.FullModeItemTemplate>
+            </toolkit:ListPicker>
             <Button Grid.Row="2" Grid.Column="0"
+                    Command="{Binding SendPhoto}"
+                    IsEnabled="{Binding HaveFriends}"
                     Content="{Binding Path=LocalizedResources.SendPageSendButton, Source={StaticResource LocalizedStrings}}"/>
         </Grid>
     </Grid>

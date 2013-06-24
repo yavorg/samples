@@ -1,11 +1,13 @@
 ﻿using CrapChat.Model;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Media.Imaging;
+using System.Linq;
 
 namespace CrapChat.ViewModel
 {
@@ -21,28 +23,66 @@ namespace CrapChat.ViewModel
             ResetImageSource();
 
             chatService = ServiceLocator.Current.GetInstance<IChatService>();
-            Friends = chatService.LoadFriends();
+
+            SendPhoto = new RelayCommand(() =>
+            {
+                Photo p = new Photo();
+                
+                // If they didn't explicitly toggle the list picker, assume 
+                // they want the first contact in the list.
+                if (SelectedFriend != null)
+                {
+                    p.RecepientMicrosoftAccount = SelectedFriend.MicrosoftAccount;
+                }
+                else
+                {
+                    p.RecepientMicrosoftAccount = Friends.First().MicrosoftAccount;
+                }
+                 
+                chatService.CreatePhoto(p);
+                chatService.UploadPhoto(p.Uri, parentViewModel.Image);
+
+                App.RootFrame.Navigate(new Uri("/View/PhotosPage.xaml", UriKind.RelativeOrAbsolute));
+
+            });
         }
 
-        public const string FriendsPropertyName = "Friends";
-        private ObservableCollection<Friend> friends;
+        public const string SelectedFriendPropertyName = "SelectedFriend";
+        private Friend selectedFriend;
+
+        public Friend SelectedFriend
+        {
+            get
+            {
+                return selectedFriend;
+            }
+
+            private set
+            {
+                if (selectedFriend == value)
+                {
+                    return;
+                }
+
+                selectedFriend = value;
+                RaisePropertyChanged(SelectedFriendPropertyName);
+            }
+        }
+
+        public const string HaveFriendsPropertyName = "HaveFriends";
+        public bool HaveFriends
+        {
+            get
+            {
+                return Friends.Count != 0;
+            }
+        }
 
         public ObservableCollection<Friend> Friends
         {
             get
             {
-                return friends;
-            }
-
-            private set
-            {
-                if (friends == value)
-                {
-                    return;
-                }
-
-                friends = value;
-                RaisePropertyChanged(FriendsPropertyName);
+                return chatService.ReadFriends();
             }
         }
 
@@ -66,6 +106,12 @@ namespace CrapChat.ViewModel
                 image = value;
                 RaisePropertyChanged(ImagePropertyName);
             }
+        }
+
+        public RelayCommand SendPhoto
+        {
+            get;
+            private set;
         }
 
         private void ResetImageSource(){

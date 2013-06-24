@@ -26,7 +26,7 @@ namespace CrapChat.ViewModel
                 });
 
             chatService = ServiceLocator.Current.GetInstance<IChatService>();
-            Friends = chatService.LoadFriends();
+            Friends = chatService.ReadFriends();
 
             
         }
@@ -63,29 +63,37 @@ namespace CrapChat.ViewModel
 
         void contacts_SearchCompleted(object sender, ContactsSearchEventArgs e)
         {
-            List<string> matches = e.Results
-                .SelectMany<Contact, string>((c) => {
-                    return c.EmailAddresses
-                        .Where((a) => {
-                            return a.EmailAddress.EndsWith("live.com") || a.EmailAddress.EndsWith("outlook.com");
-                        })
-                        .Select<ContactEmailAddress, string>((a) => a.EmailAddress);
-                }).ToList();
-
-             List<Friend> friendsToAdd = matches.Select<string, Friend>((s) =>
+            Dictionary<Contact, string> contactsMicrosoftAccount = new Dictionary<Contact, string>();
+            List<Friend> matches = e.Results
+                .Where((c) => c.EmailAddresses.Any((a) =>
                 {
-                    return new Friend()
+                    if (a.EmailAddress.EndsWith("live.com") || a.EmailAddress.EndsWith("outlook.com"))
                     {
-                        Name = "Dummy Friend",
-                        MicrosoftAccount = s
+                        // If they have multiple Microsoft Accounts, we will just pick the 
+                        // one that comes up last
+                        contactsMicrosoftAccount[c] = a.EmailAddress;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }))
+                .Select<Contact, Friend>((c) =>
+                {
+                    return new Friend
+                    {
+                        Name = c.DisplayName,
+                        MicrosoftAccount = contactsMicrosoftAccount[c]
                     };
-                }).ToList();
+                })
+                .ToList();
 
-             friendsToAdd.ForEach((c) =>
+             matches.ForEach((c) =>
                  {
                      Friends.Add(c);
                  });
-             chatService.AddFriends(friendsToAdd);
+             chatService.CreateFriends(matches);
             
         }
 
