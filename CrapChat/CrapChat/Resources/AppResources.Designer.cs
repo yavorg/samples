@@ -106,6 +106,15 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to invite people hub contacts.
+        /// </summary>
+        public static string FriendsPageInviteButton {
+            get {
+                return ResourceManager.GetString("FriendsPageInviteButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Friends.
         /// </summary>
         public static string FriendsPageTitle {

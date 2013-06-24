@@ -1,13 +1,15 @@
-﻿using System;
+﻿using CrapChat.Model;
+using CrapChat.Resources;
+using CrapChat.ViewModel;
+using GalaSoft.MvvmLight.Threading;
+using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Resources;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
-using CrapChat.Resources;
-using GalaSoft.MvvmLight.Threading;
 
 namespace CrapChat
 {
@@ -64,6 +66,10 @@ namespace CrapChat
         // This code will not execute when the application is reactivated
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+            // No friends
+            (Resources["Locator"] as ViewModelLocator).Messenger.Send<FriendsMessage>(
+                new FriendsMessage{ Friends = new List<Friend>() });
+
         }
 
         // Code to execute when the application is activated (brought to foreground)
