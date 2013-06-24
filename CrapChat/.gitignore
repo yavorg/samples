@@ -2,3 +2,4 @@ bin
 obj
 Secrets.cs
 *.suo
+packages
