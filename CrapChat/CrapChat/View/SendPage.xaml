@@ -32,7 +32,26 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-
+            <Grid.RowDefinitions>
+                <RowDefinition Height="200" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Image Source="{Binding Image}" Grid.Row="0" Grid.Column="0" Stretch="Uniform" />
+            <phone:LongListSelector Grid.Row="1" Grid.Column="0" 
+                                    ItemsSource="{Binding Friends}">
+                <phone:LongListSelector.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </phone:LongListSelector.ItemTemplate>
+            </phone:LongListSelector>
+            <Button Grid.Row="2" Grid.Column="0"
+                    Content="{Binding Path=LocalizedResources.SendPageSendButton, Source={StaticResource LocalizedStrings}}"/>
         </Grid>
     </Grid>
 

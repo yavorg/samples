@@ -1,32 +1,88 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
+﻿using CrapChat.Model;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Threading;
+using Microsoft.Practices.ServiceLocation;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace CrapChat.ViewModel
 {
     public class SendViewModel : ViewModelBase
     {
-        private ViewModelLocator locator;
+        private IChatService chatService;
+        private CameraViewModel parentViewModel;
 
         public SendViewModel()
         {
-            locator = App.Current.Resources["Locator"] as ViewModelLocator;
+            parentViewModel = ServiceLocator.Current.GetInstance<CameraViewModel>();
+            parentViewModel.PropertyChanged += parentViewModel_PropertyChanged;
+            ResetImageSource();
+
+            chatService = ServiceLocator.Current.GetInstance<IChatService>();
+            Friends = chatService.LoadFriends();
         }
 
-    
-        public Stream Image
+        public const string FriendsPropertyName = "Friends";
+        private ObservableCollection<Friend> friends;
+
+        public ObservableCollection<Friend> Friends
         {
             get
             {
-                return locator.Camera.Image;
+                return friends;
+            }
+
+            private set
+            {
+                if (friends == value)
+                {
+                    return;
+                }
+
+                friends = value;
+                RaisePropertyChanged(FriendsPropertyName);
             }
         }
 
+        public const string ImagePropertyName = "Image";
+        private BitmapImage image;
+
+        public BitmapImage Image
+        {
+            get
+            {
+                return image;
+            }
+
+            private set
+            {
+                if (image == value)
+                {
+                    return;
+                }
+
+                image = value;
+                RaisePropertyChanged(ImagePropertyName);
+            }
+        }
+
+        private void ResetImageSource(){
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                Image = new BitmapImage();
+                Image.SetSource(parentViewModel.Image);
+            });
+        }
+
+        void parentViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (String.Equals(e.PropertyName, CameraViewModel.ImagePropertyName))
+            {
+                ResetImageSource();
+            }
+        }
     }
 
 

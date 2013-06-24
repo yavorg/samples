@@ -152,4 +152,7 @@
   <data name="FriendsPageInviteButton" xml:space="preserve">
     <value>invite people hub contacts</value>
   </data>
+  <data name="SendPageSendButton" xml:space="preserve">
+    <value>send photo</value>
+  </data>
 </root>

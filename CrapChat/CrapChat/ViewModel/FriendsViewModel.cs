@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Phone.UserData;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,8 +12,12 @@ namespace CrapChat.ViewModel
 {
     public class FriendsViewModel : ViewModelBase
     {
+        private IChatService chatService;
+
         public FriendsViewModel()
         {
+            
+
             InviteContacts = new RelayCommand(() =>
                 {
                     Contacts contacts = new Contacts();
@@ -20,16 +25,10 @@ namespace CrapChat.ViewModel
                     contacts.SearchAsync(String.Empty, FilterKind.None, null);
                 });
 
-            MessengerInstance.Register<FriendsMessage>(this, (m) =>
-            {
-                Friends.Clear();
-                foreach(Friend f in m.Friends){
-                    Friends.Add(f);
-                }
-            });
+            chatService = ServiceLocator.Current.GetInstance<IChatService>();
+            Friends = chatService.LoadFriends();
 
-            Friends = new ObservableCollection<Friend>();
-
+            
         }
 
         public RelayCommand InviteContacts
@@ -86,12 +85,7 @@ namespace CrapChat.ViewModel
                  {
                      Friends.Add(c);
                  });
-
-            // Broadcast updated friend list for other ViewModels
-            MessengerInstance.Send<FriendsMessage>(
-                new FriendsMessage{ Friends = new List<Friend>(Friends) }
-            );
-
+             chatService.AddFriends(friendsToAdd);
             
         }
 

@@ -151,6 +151,15 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to send photo.
+        /// </summary>
+        public static string SendPageSendButton {
+            get {
+                return ResourceManager.GetString("SendPageSendButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Send.
         /// </summary>
         public static string SendPageTitle {

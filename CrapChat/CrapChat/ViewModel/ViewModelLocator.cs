@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
+using CrapChat.Model;
 
 namespace CrapChat.ViewModel
 {
@@ -35,19 +36,13 @@ namespace CrapChat.ViewModel
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
 
-            Messenger = new Messenger();
-
-            SimpleIoc.Default.Register<Messenger>(() => Messenger);
+            SimpleIoc.Default.Register<Messenger>();
             SimpleIoc.Default.Register<CameraViewModel>();
             SimpleIoc.Default.Register<FriendsViewModel>();
             SimpleIoc.Default.Register<PhotosViewModel>();
             SimpleIoc.Default.Register<SendViewModel>();
-        }
-
-        public Messenger Messenger
-        {
-            get;
-            set;
+            SimpleIoc.Default.Register<IChatService, ChatService>();
+            
         }
 
         public CameraViewModel Camera

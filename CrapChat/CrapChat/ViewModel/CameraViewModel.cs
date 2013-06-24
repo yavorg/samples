@@ -52,6 +52,7 @@ namespace CrapChat.ViewModel
 
                         CameraBackground = new VideoBrush();
                         CameraBackground.SetSource(cam);
+                        CameraBackground.Stretch = Stretch.Uniform;
 
                     }
                     else
