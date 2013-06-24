@@ -86,7 +86,7 @@ namespace CrapChat.ViewModel
                             // Start image capture.
                             cam.CaptureImage();
                         }
-                        catch (Exception ex)
+                        catch
                         {
                             // TODO
                         }

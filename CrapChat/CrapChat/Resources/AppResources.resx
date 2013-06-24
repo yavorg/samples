@@ -149,4 +149,7 @@
   <data name="SendPageTitle" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="FriendsPageInviteButton" xml:space="preserve">
+    <value>invite people hub contacts</value>
+  </data>
 </root>

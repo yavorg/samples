@@ -35,11 +35,19 @@ namespace CrapChat.ViewModel
             ////    SimpleIoc.Default.Register<IDataService, DataService>();
             ////}
 
-            SimpleIoc.Default.Register<Messenger>();
+            Messenger = new Messenger();
+
+            SimpleIoc.Default.Register<Messenger>(() => Messenger);
             SimpleIoc.Default.Register<CameraViewModel>();
             SimpleIoc.Default.Register<FriendsViewModel>();
             SimpleIoc.Default.Register<PhotosViewModel>();
             SimpleIoc.Default.Register<SendViewModel>();
+        }
+
+        public Messenger Messenger
+        {
+            get;
+            set;
         }
 
         public CameraViewModel Camera
