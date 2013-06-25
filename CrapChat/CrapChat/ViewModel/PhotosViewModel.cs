@@ -28,7 +28,7 @@ namespace CrapChat.ViewModel
 
             ViewPhoto = new RelayCommand(() =>
             {
-                MessageBox.Show("yay");
+                App.RootFrame.Navigate(new Uri("/View/ViewPage.xaml", UriKind.RelativeOrAbsolute));
             });
         }
 
@@ -38,6 +38,28 @@ namespace CrapChat.ViewModel
             get
             {
                 return chatService.ReadPhotoRecords();
+            }
+        }
+
+        public const string SelectedPhotoPropertyName = "SelectedPhoto";
+        private PhotoRecord selectedPhoto;
+
+        public PhotoRecord SelectedPhoto
+        {
+            get
+            {
+                return selectedPhoto;
+            }
+
+            private set
+            {
+                if (selectedPhoto == value)
+                {
+                    return;
+                }
+
+                selectedPhoto = value;
+                RaisePropertyChanged(SelectedPhotoPropertyName);
             }
         }
 

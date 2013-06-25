@@ -41,6 +41,7 @@ namespace CrapChat.ViewModel
             SimpleIoc.Default.Register<FriendsViewModel>();
             SimpleIoc.Default.Register<PhotosViewModel>();
             SimpleIoc.Default.Register<SendViewModel>();
+            SimpleIoc.Default.Register<ViewViewModel>();
             SimpleIoc.Default.Register<IChatService, ChatService>();
             
         }
@@ -74,6 +75,14 @@ namespace CrapChat.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<SendViewModel>();
+            }
+        }
+
+        public ViewViewModel View
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ViewViewModel>();
             }
         }
 

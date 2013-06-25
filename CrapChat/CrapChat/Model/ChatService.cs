@@ -29,7 +29,7 @@ namespace CrapChat.Model
                         .Where((p) =>
                         {
                             return (p.Received != new DateTimeOffset()) &&  
-                            (DateTimeOffset.Now - p.Received > TimeSpan.FromSeconds(30));
+                            (DateTimeOffset.Now - p.Received > TimeSpan.FromSeconds(5));
                         })
                         .ToList();
                     expired.ForEach((p) => 
@@ -46,7 +46,7 @@ namespace CrapChat.Model
                 }),
                 null,
                 TimeSpan.FromSeconds(0),
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(1));
 	    }
 
         public ObservableCollection<Friend> ReadFriends()

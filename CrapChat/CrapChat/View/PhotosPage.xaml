@@ -18,7 +18,6 @@
     ApplicationBar = "{StaticResource AppBar}"
     DataContext="{Binding Photos, Source={StaticResource Locator}}">
     <phone:PhoneApplicationPage.Resources>
-        <ViewModel:UriToBitmapImageConverter x:Key="UriToBitmapImageConverter"/>
         <ViewModel:DateTimeOffsetToVisibilityConverter x:Key="DateTimeOffsetToVisibilityConverter"/>
         <ViewModel:PhotoRecordToIconConverter x:Key="PhotoRecordToIconConverter"/>
         <ViewModel:PhotoRecordToBooleanConverter x:Key="PhotoRecordToBooleanConverter"/>
@@ -46,7 +45,8 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Photos}" >
+            <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Photos}" 
+                     SelectedItem="{Binding SelectedPhoto, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0,0,0,30">
@@ -67,9 +67,6 @@
                                                         PassEventArgsToCommand="True" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                            <!--
-                            <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="1"
-								Source="{Binding Uri, Converter={StaticResource UriToBitmapImageConverter}}"/> -->
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="1"
                                        FontFamily="Segoe UI Symbol" FontSize="38" HorizontalAlignment="Center"
                                        Text="{Binding Converter={StaticResource PhotoRecordToIconConverter}}"/>

@@ -221,5 +221,14 @@ namespace CrapChat.Resources {
                 return ResourceManager.GetString("SendPageTitle", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to view.
+        /// </summary>
+        public static string ViewPageTitle {
+            get {
+                return ResourceManager.GetString("ViewPageTitle", resourceCulture);
+            }
+        }
     }
 }

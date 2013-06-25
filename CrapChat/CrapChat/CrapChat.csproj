@@ -104,6 +104,7 @@
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\CameraViewModel.cs" />
+    <Compile Include="ViewModel\ViewViewModel.cs" />
     <Compile Include="ViewModel\DateTimeOffsetToVisibilityConverter.cs" />
     <Compile Include="ViewModel\FriendsViewModel.cs" />
     <Compile Include="ViewModel\PhotoRecordToBooleanConverter.cs" />
@@ -124,6 +125,9 @@
       <DependentUpon>SendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\ViewPage.xaml.cs">
+      <DependentUpon>ViewPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -143,6 +147,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SendPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

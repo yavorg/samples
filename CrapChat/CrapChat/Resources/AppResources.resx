@@ -173,4 +173,7 @@
   <data name="SendPageSendToText" xml:space="preserve">
     <value>send to:</value>
   </data>
+  <data name="ViewPageTitle" xml:space="preserve">
+    <value>view</value>
+  </data>
 </root>
