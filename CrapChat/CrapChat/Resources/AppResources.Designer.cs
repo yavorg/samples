@@ -115,11 +115,29 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to logged in user:.
+        /// </summary>
+        public static string FriendsPageLoggedInUserText {
+            get {
+                return ResourceManager.GetString("FriendsPageLoggedInUserText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to friends.
         /// </summary>
         public static string FriendsPageTitle {
             get {
                 return ResourceManager.GetString("FriendsPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to your friends:.
+        /// </summary>
+        public static string FriendsPageYourFriendsText {
+            get {
+                return ResourceManager.GetString("FriendsPageYourFriendsText", resourceCulture);
             }
         }
         
@@ -183,6 +201,15 @@ namespace CrapChat.Resources {
         public static string SendPageSendButton {
             get {
                 return ResourceManager.GetString("SendPageSendButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to send to:.
+        /// </summary>
+        public static string SendPageSendToText {
+            get {
+                return ResourceManager.GetString("SendPageSendToText", resourceCulture);
             }
         }
         

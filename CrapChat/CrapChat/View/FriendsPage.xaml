@@ -36,14 +36,15 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Grid.Row="0" Grid.Column="0"
-                    Command="{Binding InviteContacts}"
-                    Content="{Binding Path=LocalizedResources.FriendsPageInviteButton, Source={StaticResource LocalizedStrings}}"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" FontSize="24" 
+                       Text="{Binding Path=LocalizedResources.FriendsPageLoggedInUserText, Source={StaticResource LocalizedStrings}}"/>
             <toolkit:ListPicker  Grid.Row="1" Grid.Column="0"
                                  ItemsSource="{Binding Friends}"
                                  IsEnabled="{Binding HaveFriends}"
@@ -59,13 +60,19 @@
                     </DataTemplate>
                 </toolkit:ListPicker.FullModeItemTemplate>
             </toolkit:ListPicker>
-            <ListBox Grid.Row="2" Grid.Column="0" ItemsSource="{Binding Friends}">
+            <TextBlock Grid.Row="2" Grid.Column="0" FontSize="24" 
+                       Text="{Binding Path=LocalizedResources.FriendsPageYourFriendsText, Source={StaticResource LocalizedStrings}}"/>
+            <ListBox Grid.Row="3" Grid.Column="0" ItemsSource="{Binding Friends}" Margin="10,0">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Name}" FontSize="24" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <Button Grid.Row="4" Grid.Column="0"
+                    Command="{Binding InviteContacts}"
+                    Content="{Binding Path=LocalizedResources.FriendsPageInviteButton, Source={StaticResource LocalizedStrings}}"/>
+
 
         </Grid>
     </Grid>

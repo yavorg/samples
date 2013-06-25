@@ -164,4 +164,13 @@
   <data name="PhotosPageSentOnText" xml:space="preserve">
     <value>Sent on:</value>
   </data>
+  <data name="FriendsPageLoggedInUserText" xml:space="preserve">
+    <value>logged in user:</value>
+  </data>
+  <data name="FriendsPageYourFriendsText" xml:space="preserve">
+    <value>your friends:</value>
+  </data>
+  <data name="SendPageSendToText" xml:space="preserve">
+    <value>send to:</value>
+  </data>
 </root>

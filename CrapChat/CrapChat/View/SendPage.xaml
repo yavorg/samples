@@ -37,13 +37,16 @@
                 <RowDefinition Height="200" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Image Source="{Binding Image}" Grid.Row="0" Grid.Column="0" Stretch="Uniform" />
-            <toolkit:ListPicker  Grid.Row="1" Grid.Column="0"
+            <TextBlock Grid.Row="1" Grid.Column="0" FontSize="24"
+                       Text="{Binding Path=LocalizedResources.SendPageSendToText, Source={StaticResource LocalizedStrings}}"/>
+            <toolkit:ListPicker  Grid.Row="2" Grid.Column="0"
                                  ItemsSource="{Binding Friends}"
                                  IsEnabled="{Binding HaveFriends}"
                                  SelectedItem="{Binding SelectedFriend, Mode=TwoWay}">
@@ -58,7 +61,7 @@
                     </DataTemplate>
                 </toolkit:ListPicker.FullModeItemTemplate>
             </toolkit:ListPicker>
-            <Button Grid.Row="2" Grid.Column="0"
+            <Button Grid.Row="3" Grid.Column="0"
                     Command="{Binding SendPhoto}"
                     IsEnabled="{Binding HaveFriends}"
                     Content="{Binding Path=LocalizedResources.SendPageSendButton, Source={StaticResource LocalizedStrings}}"/>
