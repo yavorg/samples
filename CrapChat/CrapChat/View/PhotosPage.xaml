@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ViewModel="clr-namespace:CrapChat.ViewModel"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WP8"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -19,6 +21,7 @@
         <ViewModel:UriToBitmapImageConverter x:Key="UriToBitmapImageConverter"/>
         <ViewModel:DateTimeOffsetToVisibilityConverter x:Key="DateTimeOffsetToVisibilityConverter"/>
         <ViewModel:PhotoRecordToIconConverter x:Key="PhotoRecordToIconConverter"/>
+        <ViewModel:PhotoRecordToBooleanConverter x:Key="PhotoRecordToBooleanConverter"/>
     </phone:PhoneApplicationPage.Resources>
    
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -46,7 +49,7 @@
             <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Photos}" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid Margin="0,0,0,30">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -57,29 +60,36 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Tap">
+                                    <cmd:EventToCommand Command="{Binding Photos.ViewPhoto, Mode=OneWay, Source={StaticResource Locator}}"
+                                                        IsEnabled="{Binding Converter={StaticResource PhotoRecordToBooleanConverter}}"
+                                                        PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
                             <!--
                             <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="1"
 								Source="{Binding Uri, Converter={StaticResource UriToBitmapImageConverter}}"/> -->
                             <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="1"
                                        FontFamily="Segoe UI Symbol" FontSize="38" HorizontalAlignment="Center"
                                        Text="{Binding Converter={StaticResource PhotoRecordToIconConverter}}"/>
-                            <TextBlock Grid.Row="0" Grid.Column="1"
+                            <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,10,0"
 								Text="{Binding LocalizedResources.PhotosPageSentByText, Source={StaticResource LocalizedStrings}}" />
-                            <TextBlock Grid.Row="1" Grid.Column="1"
+                            <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,10,0"
 								Text="{Binding LocalizedResources.PhotosPageSentOnText, Source={StaticResource LocalizedStrings}}" />
-                            <TextBlock Grid.Row="2" Grid.Column="1"
+                            <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,10,0"
 								Text="{Binding LocalizedResources.PhotosPageReceivedOnText, Source={StaticResource LocalizedStrings}}" 
                                 Visibility="{Binding Received, Converter={StaticResource DateTimeOffsetToVisibilityConverter}}" />
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SenderName}"  />
                             <TextBlock Grid.Row="1" Grid.Column="2">
                                 <TextBlock.Text>
-                                    <Binding Path="Sent" StringFormat="f" />
+                                    <Binding Path="Sent" StringFormat="g" />
                                 </TextBlock.Text>
                             </TextBlock>
                             <TextBlock Grid.Row="2" Grid.Column="2" 
                                        Visibility="{Binding Received, Converter={StaticResource DateTimeOffsetToVisibilityConverter}}">
                                 <TextBlock.Text>
-                                    <Binding Path="Received" StringFormat="f" />
+                                    <Binding Path="Received" StringFormat="g" />
                                 </TextBlock.Text>
                             </TextBlock>
                         </Grid>

@@ -61,7 +61,7 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Camera.
+        ///   Looks up a localized string similar to camera.
         /// </summary>
         public static string AppBarCameraButtonText {
             get {
@@ -70,7 +70,7 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Friends.
+        ///   Looks up a localized string similar to friends.
         /// </summary>
         public static string AppBarFriendsButtonText {
             get {
@@ -79,7 +79,7 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Photos.
+        ///   Looks up a localized string similar to photos.
         /// </summary>
         public static string AppBarPhotosButtonText {
             get {
@@ -97,7 +97,7 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Camera.
+        ///   Looks up a localized string similar to camera.
         /// </summary>
         public static string CameraPageTitle {
             get {
@@ -115,7 +115,7 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Friends.
+        ///   Looks up a localized string similar to friends.
         /// </summary>
         public static string FriendsPageTitle {
             get {
@@ -151,7 +151,7 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Photos.
+        ///   Looks up a localized string similar to photos.
         /// </summary>
         public static string PhotosPageTitle {
             get {
@@ -187,7 +187,7 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Send.
+        ///   Looks up a localized string similar to send.
         /// </summary>
         public static string SendPageTitle {
             get {

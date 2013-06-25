@@ -106,6 +106,7 @@
     <Compile Include="ViewModel\CameraViewModel.cs" />
     <Compile Include="ViewModel\DateTimeOffsetToVisibilityConverter.cs" />
     <Compile Include="ViewModel\FriendsViewModel.cs" />
+    <Compile Include="ViewModel\PhotoRecordToBooleanConverter.cs" />
     <Compile Include="ViewModel\PhotoRecordToIconConverter.cs" />
     <Compile Include="ViewModel\PhotosViewModel.cs" />
     <Compile Include="ViewModel\SendViewModel.cs" />

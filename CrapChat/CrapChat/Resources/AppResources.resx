@@ -129,25 +129,25 @@
     <value>CrapChat</value>
   </data>
   <data name="AppBarCameraButtonText" xml:space="preserve">
-    <value>Camera</value>
+    <value>camera</value>
   </data>
   <data name="AppBarFriendsButtonText" xml:space="preserve">
-    <value>Friends</value>
+    <value>friends</value>
   </data>
   <data name="AppBarPhotosButtonText" xml:space="preserve">
-    <value>Photos</value>
+    <value>photos</value>
   </data>
   <data name="CameraPageTitle" xml:space="preserve">
-    <value>Camera</value>
+    <value>camera</value>
   </data>
   <data name="FriendsPageTitle" xml:space="preserve">
-    <value>Friends</value>
+    <value>friends</value>
   </data>
   <data name="PhotosPageTitle" xml:space="preserve">
-    <value>Photos</value>
+    <value>photos</value>
   </data>
   <data name="SendPageTitle" xml:space="preserve">
-    <value>Send</value>
+    <value>send</value>
   </data>
   <data name="FriendsPageInviteButton" xml:space="preserve">
     <value>invite people hub contacts</value>

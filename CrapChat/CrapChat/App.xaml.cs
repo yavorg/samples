@@ -23,11 +23,17 @@ namespace CrapChat
         /// <returns>The root frame of the Phone Application.</returns>
         public static PhoneApplicationFrame RootFrame { get; private set; }
 
-        public static string CurrentUser
+        public static Friend CurrentUser
         {
             get
             {
-                return "dummy@live.com";
+                FriendsViewModel model = ServiceLocator.Current.GetInstance<FriendsViewModel>();
+                return model.CurrentUser;
+            }
+            set
+            {
+                FriendsViewModel model = ServiceLocator.Current.GetInstance<FriendsViewModel>();
+                model.CurrentUser = value;
             }
         }
 

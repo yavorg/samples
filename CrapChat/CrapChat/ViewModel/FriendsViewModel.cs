@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace CrapChat.ViewModel
 {
@@ -29,7 +30,28 @@ namespace CrapChat.ViewModel
             {
                 RaisePropertyChanged(FriendsPropertyName);
             });
-            
+        }
+
+        public const string CurrentUserPropertyName = "CurrentUser";
+        private Friend currentUser;
+
+        public Friend CurrentUser
+        {
+            get
+            {
+                return currentUser;
+            }
+
+            set
+            {
+                if (currentUser == value)
+                {
+                    return;
+                }
+
+                currentUser = value;
+                RaisePropertyChanged(CurrentUserPropertyName);
+            }
         }
 
         public RelayCommand InviteContacts
@@ -50,6 +72,15 @@ namespace CrapChat.ViewModel
             get
             {
                 return chatService.ReadFriends();
+            }
+        }
+
+        public const string HaveFriendsPropertyName = "HaveFriends";
+        public bool HaveFriends
+        {
+            get
+            {
+                return Friends.Count != 0;
             }
         }
 
@@ -86,7 +117,12 @@ namespace CrapChat.ViewModel
             
             // Trigger reload of friends
             RaisePropertyChanged(FriendsPropertyName);
-            
+            RaisePropertyChanged(HaveFriendsPropertyName);
+
+            // The databinding wont' refresh until they make
+            // a selection in the list picker, so do the first
+            // selection manually
+            CurrentUser = Friends.First();
         }
 
     }

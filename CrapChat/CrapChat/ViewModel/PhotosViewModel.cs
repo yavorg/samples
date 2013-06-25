@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace CrapChat.ViewModel
 {
@@ -23,6 +24,11 @@ namespace CrapChat.ViewModel
             RefreshCommand = new RelayCommand(() =>
             {
                 RaisePropertyChanged(PhotosPropertyName);
+            });
+
+            ViewPhoto = new RelayCommand(() =>
+            {
+                MessageBox.Show("yay");
             });
         }
 
@@ -40,6 +46,11 @@ namespace CrapChat.ViewModel
             get;
             private set;
         }
- 
+
+        public RelayCommand ViewPhoto
+        {
+            get;
+            private set;
+        }
     }
 }

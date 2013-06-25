@@ -13,8 +13,6 @@ namespace CrapChat.Model
         private List<Friend> friends;
         private List<PhotoRecord> photoRecords;
         private Dictionary<Guid, PhotoContent> photoContents;
-        private const string myMicrosoftAccount = "dummy@live.com";
-        private const string myName = "Authenticated Dummy";
         private Timer timer;
 
         public ChatService()
@@ -30,7 +28,7 @@ namespace CrapChat.Model
                     List<PhotoRecord> expired = photoRecords
                         .Where((p) =>
                         {
-                            return (p.Received != null) &&  
+                            return (p.Received != new DateTimeOffset()) &&  
                             (DateTimeOffset.Now - p.Received > TimeSpan.FromSeconds(30));
                         })
                         .ToList();
@@ -72,8 +70,8 @@ namespace CrapChat.Model
             ObservableCollection<PhotoRecord> results = new ObservableCollection<PhotoRecord>();
             foreach (PhotoRecord p in photoRecords)
             {
-                if (String.Equals(p.RecepientMicrosoftAccount, myMicrosoftAccount) ||
-                    String.Equals(p.SenderMicrosoftAccount, myMicrosoftAccount))
+                if (String.Equals(p.RecepientMicrosoftAccount, App.CurrentUser.MicrosoftAccount) ||
+                    String.Equals(p.SenderMicrosoftAccount, App.CurrentUser.MicrosoftAccount))
                 {
                     results.Add(p);
                 }
@@ -91,8 +89,8 @@ namespace CrapChat.Model
             photoRecords.Add(record);
             record.Id = photoRecords.IndexOf(record);
             record.Sent = DateTimeOffset.Now;
-            record.SenderName = myName;
-            record.SenderMicrosoftAccount = myMicrosoftAccount;
+            record.SenderName = App.CurrentUser.Name;
+            record.SenderMicrosoftAccount = App.CurrentUser.MicrosoftAccount;
             record.PhotoContentId = content.Id;
             record.Expired = false;
 

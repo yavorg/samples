@@ -6,6 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -34,6 +35,7 @@
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -42,7 +44,22 @@
             <Button Grid.Row="0" Grid.Column="0"
                     Command="{Binding InviteContacts}"
                     Content="{Binding Path=LocalizedResources.FriendsPageInviteButton, Source={StaticResource LocalizedStrings}}"/>
-            <ListBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Friends}">
+            <toolkit:ListPicker  Grid.Row="1" Grid.Column="0"
+                                 ItemsSource="{Binding Friends}"
+                                 IsEnabled="{Binding HaveFriends}"
+                                 SelectedItem="{Binding CurrentUser, Mode=TwoWay}">
+                <toolkit:ListPicker.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </toolkit:ListPicker.ItemTemplate>
+                <toolkit:ListPicker.FullModeItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </toolkit:ListPicker.FullModeItemTemplate>
+            </toolkit:ListPicker>
+            <ListBox Grid.Row="2" Grid.Column="0" ItemsSource="{Binding Friends}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding Name}" />
