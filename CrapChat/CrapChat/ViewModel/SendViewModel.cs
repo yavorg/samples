@@ -27,7 +27,7 @@ namespace CrapChat.ViewModel
 
             SendPhoto = new RelayCommand(() =>
             {
-                Photo p = new Photo();
+                PhotoRecord p = new PhotoRecord();
                 
                 // If they didn't explicitly toggle the list picker, assume 
                 // they want the first contact in the list.
@@ -40,8 +40,9 @@ namespace CrapChat.ViewModel
                     p.RecepientMicrosoftAccount = Friends.First().MicrosoftAccount;
                 }
                  
-                chatService.CreatePhoto(p);
-                chatService.UploadPhoto(p.Uri, parentViewModel.Image);
+                chatService.CreatePhotoRecord(p);
+                PhotoContent content = chatService.ReadPhotoContent(p.PhotoContentId);
+                chatService.UploadPhoto(content.Uri, parentViewModel.Image);
 
                 App.RootFrame.Navigate(new Uri("/View/PhotosPage.xaml", UriKind.RelativeOrAbsolute));
 

@@ -12,10 +12,15 @@ namespace CrapChat.Model
         ObservableCollection<Friend> ReadFriends();
         ObservableCollection<Friend> CreateFriends(IEnumerable<Friend> newFriends);
 
-        ObservableCollection<Photo> ReadPhotos();
+        ObservableCollection<PhotoRecord> ReadPhotoRecords();
         
-        Photo CreatePhoto(Photo photo);
+        PhotoRecord CreatePhotoRecord(PhotoRecord record);
+        
+        PhotoContent ReadPhotoContent(Guid id);
+        void DeletePhotoContent(Guid id);
+
         void UploadPhoto(Uri location, Stream photo);
         Stream ReadPhoto(Uri location);
+        void DeletePhoto(Uri location);
     }
 }

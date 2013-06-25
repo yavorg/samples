@@ -17,6 +17,8 @@
     DataContext="{Binding Photos, Source={StaticResource Locator}}">
     <phone:PhoneApplicationPage.Resources>
         <ViewModel:UriToBitmapImageConverter x:Key="UriToBitmapImageConverter"/>
+        <ViewModel:DateTimeOffsetToVisibilityConverter x:Key="DateTimeOffsetToVisibilityConverter"/>
+        <ViewModel:PhotoRecordToIconConverter x:Key="PhotoRecordToIconConverter"/>
     </phone:PhoneApplicationPage.Resources>
    
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -41,7 +43,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Photos}">
+            <ListBox Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Photos}" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -55,17 +57,31 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+                            <!--
                             <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="1"
-								Source="{Binding Uri, Converter={StaticResource UriToBitmapImageConverter}}"/>
+								Source="{Binding Uri, Converter={StaticResource UriToBitmapImageConverter}}"/> -->
+                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="1"
+                                       FontFamily="Segoe UI Symbol" FontSize="38" HorizontalAlignment="Center"
+                                       Text="{Binding Converter={StaticResource PhotoRecordToIconConverter}}"/>
                             <TextBlock Grid.Row="0" Grid.Column="1"
 								Text="{Binding LocalizedResources.PhotosPageSentByText, Source={StaticResource LocalizedStrings}}" />
                             <TextBlock Grid.Row="1" Grid.Column="1"
 								Text="{Binding LocalizedResources.PhotosPageSentOnText, Source={StaticResource LocalizedStrings}}" />
                             <TextBlock Grid.Row="2" Grid.Column="1"
-								Text="{Binding LocalizedResources.PhotosPageReceivedOnText, Source={StaticResource LocalizedStrings}}" />
+								Text="{Binding LocalizedResources.PhotosPageReceivedOnText, Source={StaticResource LocalizedStrings}}" 
+                                Visibility="{Binding Received, Converter={StaticResource DateTimeOffsetToVisibilityConverter}}" />
                             <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SenderName}"  />
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Sent}" />
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding Received}" />
+                            <TextBlock Grid.Row="1" Grid.Column="2">
+                                <TextBlock.Text>
+                                    <Binding Path="Sent" StringFormat="f" />
+                                </TextBlock.Text>
+                            </TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="2" 
+                                       Visibility="{Binding Received, Converter={StaticResource DateTimeOffsetToVisibilityConverter}}">
+                                <TextBlock.Text>
+                                    <Binding Path="Received" StringFormat="f" />
+                                </TextBlock.Text>
+                            </TextBlock>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

@@ -27,11 +27,11 @@ namespace CrapChat.ViewModel
         }
 
         public const string PhotosPropertyName = "Photos";
-        public ObservableCollection<Photo> Photos
+        public ObservableCollection<PhotoRecord> Photos
         {
             get
             {
-                return chatService.ReadPhotos();
+                return chatService.ReadPhotoRecords();
             }
         }
 

@@ -4,8 +4,8 @@ using System;
 
 namespace CrapChat.Model
 {
-    [DataTable("photos")]
-    public class Photo
+    [DataTable("photoRecords")]
+    public class PhotoRecord
     {
         public int Id
         {
@@ -42,8 +42,8 @@ namespace CrapChat.Model
         }
 
 
-        [JsonProperty(PropertyName = "photo")]
-        public Uri Uri
+        [JsonProperty(PropertyName = "photoContentId")]
+        public Guid PhotoContentId
         {
             get;
             set;

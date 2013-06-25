@@ -11,7 +11,8 @@ namespace CrapChat.Model
     public class ChatService : IChatService
     {
         private List<Friend> friends;
-        private List<Photo> photos;
+        private List<PhotoRecord> photoRecords;
+        private Dictionary<Guid, PhotoContent> photoContents;
         private const string myMicrosoftAccount = "dummy@live.com";
         private const string myName = "Authenticated Dummy";
         private Timer timer;
@@ -19,23 +20,29 @@ namespace CrapChat.Model
         public ChatService()
 	    {
             friends = new List<Friend>();
-            photos = new List<Photo>();
+            photoRecords = new List<PhotoRecord>();
+            photoContents = new Dictionary<Guid, PhotoContent>();
 
             // Timer to expire any photos that were read more than
             // 30 seconds ago
             timer = new Timer(new TimerCallback((o) =>
                 {
-                    List<Photo> expired = photos
+                    List<PhotoRecord> expired = photoRecords
                         .Where((p) =>
                         {
                             return (p.Received != null) &&  
-                            (DateTimeOffset.Now - p.Received > TimeSpan.FromMinutes(30));
+                            (DateTimeOffset.Now - p.Received > TimeSpan.FromSeconds(30));
                         })
                         .ToList();
                     expired.ForEach((p) => 
                         {
                             p.Expired = true;
-                            DeletePhoto(p.Uri);
+
+                            PhotoContent content = null;
+                            if(photoContents.TryGetValue(p.PhotoContentId, out content)){
+                                DeletePhoto(content.Uri);
+                                DeletePhotoContent(content.Id);
+                            }
                         });
                    
                 }),
@@ -60,35 +67,63 @@ namespace CrapChat.Model
         }
 
 
-        public ObservableCollection<Photo> ReadPhotos()
+        public ObservableCollection<PhotoRecord> ReadPhotoRecords()
         {
-            foreach (Photo p in photos)
+            ObservableCollection<PhotoRecord> results = new ObservableCollection<PhotoRecord>();
+            foreach (PhotoRecord p in photoRecords)
             {
-                if (p.Expired)
+                if (String.Equals(p.RecepientMicrosoftAccount, myMicrosoftAccount) ||
+                    String.Equals(p.SenderMicrosoftAccount, myMicrosoftAccount))
                 {
-                    p.Uri = null;
+                    results.Add(p);
+                }
+            }
+            return results;
+        }
+
+        public PhotoRecord CreatePhotoRecord(PhotoRecord record)
+        {
+            PhotoContent content = new PhotoContent();
+            content.Id = Guid.NewGuid();
+            content.Uri = new Uri(String.Format("http://{0}", Guid.NewGuid()));
+            photoContents[content.Id] = content;
+
+            photoRecords.Add(record);
+            record.Id = photoRecords.IndexOf(record);
+            record.Sent = DateTimeOffset.Now;
+            record.SenderName = myName;
+            record.SenderMicrosoftAccount = myMicrosoftAccount;
+            record.PhotoContentId = content.Id;
+            record.Expired = false;
+
+            content.PhotoRecordId = record.Id;
+
+            return record;
+        }
+
+        public PhotoContent ReadPhotoContent(Guid id)
+        {
+            PhotoContent content = null;
+            if(photoContents.TryGetValue(id, out content))
+            {
+                if (content.Uploaded == true)
+                {
+                    PhotoRecord record = photoRecords[content.PhotoRecordId];
+                    record.Received = DateTimeOffset.Now;
                 }
                 else
                 {
-                    if (p.Received == null)
-                    {
-                        p.Received = DateTimeOffset.Now;
-                    }
+                    content.Uploaded = true;
                 }
             }
-            return new ObservableCollection<Photo>(photos);
+
+            return content;
+
         }
 
-        public Photo CreatePhoto(Photo photo)
+        public void DeletePhotoContent(Guid id)
         {
-            photos.Add(photo);
-            photo.Id = photos.IndexOf(photo);
-            photo.Sent = DateTimeOffset.Now;
-            photo.SenderName = myName;
-            photo.SenderMicrosoftAccount = myMicrosoftAccount;
-            photo.Uri = new Uri(String.Format("http://{0}", Guid.NewGuid()));
-            photo.Expired = false;
-            return photo;
+            photoContents.Remove(id);
         }
 
         public void UploadPhoto(Uri location, Stream photo)

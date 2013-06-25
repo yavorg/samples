@@ -23,6 +23,14 @@ namespace CrapChat
         /// <returns>The root frame of the Phone Application.</returns>
         public static PhoneApplicationFrame RootFrame { get; private set; }
 
+        public static string CurrentUser
+        {
+            get
+            {
+                return "dummy@live.com";
+            }
+        }
+
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>

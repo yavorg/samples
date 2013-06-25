@@ -37,7 +37,8 @@
   <ItemGroup>
     <Compile Include="Friend.cs" />
     <Compile Include="IChatService.cs" />
-    <Compile Include="Photo.cs" />
+    <Compile Include="PhotoContent.cs" />
+    <Compile Include="PhotoRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
