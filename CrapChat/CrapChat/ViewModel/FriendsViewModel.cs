@@ -16,18 +16,19 @@ namespace CrapChat.ViewModel
 
         public FriendsViewModel()
         {
-            
+            chatService = ServiceLocator.Current.GetInstance<IChatService>();
 
             InviteContacts = new RelayCommand(() =>
-                {
-                    Contacts contacts = new Contacts();
-                    contacts.SearchCompleted += contacts_SearchCompleted;
-                    contacts.SearchAsync(String.Empty, FilterKind.None, null);
-                });
+            {
+                Contacts contacts = new Contacts();
+                contacts.SearchCompleted += contacts_SearchCompleted;
+                contacts.SearchAsync(String.Empty, FilterKind.None, null);
+            });
 
-            chatService = ServiceLocator.Current.GetInstance<IChatService>();
-            Friends = chatService.ReadFriends();
-
+            RefreshCommand = new RelayCommand(() =>
+            {
+                RaisePropertyChanged(FriendsPropertyName);
+            });
             
         }
 
@@ -37,26 +38,18 @@ namespace CrapChat.ViewModel
             private set;
         }
 
+        public RelayCommand RefreshCommand
+        {
+            get;
+            private set;
+        }
       
         public const string FriendsPropertyName = "Friends";
-        private ObservableCollection<Friend> friends;
-
         public ObservableCollection<Friend> Friends
         {
             get
             {
-                return friends;
-            }
-
-            private set
-            {
-                if (friends == value)
-                {
-                    return;
-                }
-
-                friends = value;
-                RaisePropertyChanged(FriendsPropertyName);
+                return chatService.ReadFriends();
             }
         }
 
@@ -89,11 +82,10 @@ namespace CrapChat.ViewModel
                 })
                 .ToList();
 
-             matches.ForEach((c) =>
-                 {
-                     Friends.Add(c);
-                 });
-             chatService.CreateFriends(matches);
+            chatService.CreateFriends(matches);
+            
+            // Trigger reload of friends
+            RaisePropertyChanged(FriendsPropertyName);
             
         }
 

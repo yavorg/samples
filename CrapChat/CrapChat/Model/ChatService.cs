@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework.Media;
 using System.Linq;
+using System.Threading;
 
 namespace CrapChat.Model
 {
@@ -13,11 +14,34 @@ namespace CrapChat.Model
         private List<Photo> photos;
         private const string myMicrosoftAccount = "dummy@live.com";
         private const string myName = "Authenticated Dummy";
+        private Timer timer;
 
         public ChatService()
 	    {
             friends = new List<Friend>();
             photos = new List<Photo>();
+
+            // Timer to expire any photos that were read more than
+            // 30 seconds ago
+            timer = new Timer(new TimerCallback((o) =>
+                {
+                    List<Photo> expired = photos
+                        .Where((p) =>
+                        {
+                            return (p.Received != null) &&  
+                            (DateTimeOffset.Now - p.Received > TimeSpan.FromMinutes(30));
+                        })
+                        .ToList();
+                    expired.ForEach((p) => 
+                        {
+                            p.Expired = true;
+                            DeletePhoto(p.Uri);
+                        });
+                   
+                }),
+                null,
+                TimeSpan.FromSeconds(0),
+                TimeSpan.FromSeconds(10));
 	    }
 
         public ObservableCollection<Friend> ReadFriends()
@@ -38,6 +62,20 @@ namespace CrapChat.Model
 
         public ObservableCollection<Photo> ReadPhotos()
         {
+            foreach (Photo p in photos)
+            {
+                if (p.Expired)
+                {
+                    p.Uri = null;
+                }
+                else
+                {
+                    if (p.Received == null)
+                    {
+                        p.Received = DateTimeOffset.Now;
+                    }
+                }
+            }
             return new ObservableCollection<Photo>(photos);
         }
 
@@ -49,6 +87,7 @@ namespace CrapChat.Model
             photo.SenderName = myName;
             photo.SenderMicrosoftAccount = myMicrosoftAccount;
             photo.Uri = new Uri(String.Format("http://{0}", Guid.NewGuid()));
+            photo.Expired = false;
             return photo;
         }
 
@@ -64,24 +103,32 @@ namespace CrapChat.Model
         public Stream ReadPhoto(Uri location)
         {
             Stream result = null;
-            using (MediaLibrary ml = new MediaLibrary())
+            if (location != null)
             {
-                PictureAlbum cameraRoll = ml.RootPictureAlbum.Albums
-                    .Where((a) => String.Equals(a.Name, "Camera Roll"))
-                    .FirstOrDefault();
-                if (cameraRoll != null)
+                using (MediaLibrary ml = new MediaLibrary())
                 {
-                    Picture match = cameraRoll.Pictures
-                        .Where((p) => String.Equals(p.Name, location.ToString()))
+                    PictureAlbum cameraRoll = ml.RootPictureAlbum.Albums
+                        .Where((a) => String.Equals(a.Name, "Camera Roll"))
                         .FirstOrDefault();
-                    if (match != null)
+                    if (cameraRoll != null)
                     {
-                        result = match.GetImage();
-                    }       
-                }
+                        Picture match = cameraRoll.Pictures
+                            .Where((p) => String.Equals(p.Name, location.ToString()))
+                            .FirstOrDefault();
+                        if (match != null)
+                        {
+                            result = match.GetImage();
+                        }
+                    }
 
+                }
             }
             return result;
+        }
+
+        public void DeletePhoto(Uri location)
+        {
+            // Not possible to delete photos from MediaLibrary
         }
     }
 }

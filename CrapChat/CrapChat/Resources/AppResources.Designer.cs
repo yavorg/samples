@@ -124,6 +124,33 @@ namespace CrapChat.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Received on:.
+        /// </summary>
+        public static string PhotosPageReceivedOnText {
+            get {
+                return ResourceManager.GetString("PhotosPageReceivedOnText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sent by:.
+        /// </summary>
+        public static string PhotosPageSentByText {
+            get {
+                return ResourceManager.GetString("PhotosPageSentByText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sent on:.
+        /// </summary>
+        public static string PhotosPageSentOnText {
+            get {
+                return ResourceManager.GetString("PhotosPageSentOnText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Photos.
         /// </summary>
         public static string PhotosPageTitle {

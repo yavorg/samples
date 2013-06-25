@@ -107,6 +107,7 @@
     <Compile Include="ViewModel\FriendsViewModel.cs" />
     <Compile Include="ViewModel\PhotosViewModel.cs" />
     <Compile Include="ViewModel\SendViewModel.cs" />
+    <Compile Include="ViewModel\UriToBitmapImageConverter.cs" />
     <Compile Include="View\CameraPage.xaml.cs">
       <DependentUpon>CameraPage.xaml</DependentUpon>
     </Compile>

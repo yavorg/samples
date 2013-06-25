@@ -18,11 +18,12 @@ namespace CrapChat.ViewModel
 
         public SendViewModel()
         {
+            chatService = ServiceLocator.Current.GetInstance<IChatService>();
+            
             parentViewModel = ServiceLocator.Current.GetInstance<CameraViewModel>();
             parentViewModel.PropertyChanged += parentViewModel_PropertyChanged;
             ResetImageSource();
 
-            chatService = ServiceLocator.Current.GetInstance<IChatService>();
 
             SendPhoto = new RelayCommand(() =>
             {
@@ -44,6 +45,11 @@ namespace CrapChat.ViewModel
 
                 App.RootFrame.Navigate(new Uri("/View/PhotosPage.xaml", UriKind.RelativeOrAbsolute));
 
+            });
+
+            RefreshCommand = new RelayCommand(() =>
+            {
+                RaisePropertyChanged(FriendsPropertyName);
             });
         }
 
@@ -78,6 +84,7 @@ namespace CrapChat.ViewModel
             }
         }
 
+        public const string FriendsPropertyName = "Friends";
         public ObservableCollection<Friend> Friends
         {
             get
@@ -109,6 +116,12 @@ namespace CrapChat.ViewModel
         }
 
         public RelayCommand SendPhoto
+        {
+            get;
+            private set;
+        }
+
+        public RelayCommand RefreshCommand
         {
             get;
             private set;

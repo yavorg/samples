@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using CrapChat.ViewModel;
 
 namespace CrapChat.View
 {
@@ -15,6 +16,12 @@ namespace CrapChat.View
         public SendPage()
         {
             InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            (this.DataContext as SendViewModel).RefreshCommand.Execute(e);
         }
     }
 }

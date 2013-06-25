@@ -155,4 +155,13 @@
   <data name="SendPageSendButton" xml:space="preserve">
     <value>send photo</value>
   </data>
+  <data name="PhotosPageReceivedOnText" xml:space="preserve">
+    <value>Received on:</value>
+  </data>
+  <data name="PhotosPageSentByText" xml:space="preserve">
+    <value>Sent by:</value>
+  </data>
+  <data name="PhotosPageSentOnText" xml:space="preserve">
+    <value>Sent on:</value>
+  </data>
 </root>

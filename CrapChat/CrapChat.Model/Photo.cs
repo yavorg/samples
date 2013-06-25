@@ -62,5 +62,13 @@ namespace CrapChat.Model
             get;
             set;
         }
+
+        [JsonProperty(PropertyName = "expired")]
+        public bool Expired
+        {
+            get;
+            set;
+        }
+
     }
 }
