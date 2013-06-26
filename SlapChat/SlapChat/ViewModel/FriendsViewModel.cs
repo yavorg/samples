@@ -44,6 +44,7 @@ namespace SlapChat.ViewModel
 
             RefreshCommand = new RelayCommand(() =>
             {
+                RaisePropertyChanged(ContactsPropertyName);
                 RaisePropertyChanged(FriendsPropertyName);
             });
 
@@ -176,8 +177,6 @@ namespace SlapChat.ViewModel
 
                 // Trigger reload of friends
                 RaisePropertyChanged(FriendsPropertyName);
-                //RaisePropertyChanged(HaveFriendsPropertyName);
-
             }
         }
 
