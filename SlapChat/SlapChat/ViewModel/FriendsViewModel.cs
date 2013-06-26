@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
+using System.Text;
 
 namespace SlapChat.ViewModel
 {
@@ -19,23 +20,65 @@ namespace SlapChat.ViewModel
         {
             chatService = ServiceLocator.Current.GetInstance<IChatService>();
 
+            Contacts contacts = new Contacts();
+            contacts.SearchCompleted += contacts_SearchCompleted;
+            contacts.SearchAsync(String.Empty, FilterKind.None, null);
+
             InviteContacts = new RelayCommand(() =>
             {
-                Contacts contacts = new Contacts();
-                contacts.SearchCompleted += contacts_SearchCompleted;
-                contacts.SearchAsync(String.Empty, FilterKind.None, null);
+                if (CurrentUser != null)
+                {
+                    StringBuilder emailAddresses = new StringBuilder();
+                    foreach (User contact in Contacts)
+                    {
+                        emailAddresses.Append(contact.EmailAddresses).Append(" ");
+                    }
+                    emailAddresses.Remove(emailAddresses.Length - 1, 1);
+
+                    chatService.CreateFriends(CurrentUser.UserId, 
+                        emailAddresses.ToString());
+
+                    RaisePropertyChanged(FriendsPropertyName);
+                }
             });
 
             RefreshCommand = new RelayCommand(() =>
             {
                 RaisePropertyChanged(FriendsPropertyName);
             });
+
+            PropertyChanged += FriendsViewModel_PropertyChanged;
+
+
         }
 
-        public const string CurrentUserPropertyName = "CurrentUser";
-        private Friend currentUser;
+        public const string ContactsPropertyName = "Contacts";
+        private List<User> contacts;
 
-        public Friend CurrentUser
+        public List<User> Contacts
+        {
+            get
+            {
+                return contacts;
+            }
+
+            set
+            {
+                if (contacts == value)
+                {
+                    return;
+                }
+
+                contacts = value;
+                RaisePropertyChanged(ContactsPropertyName);
+            }
+        }
+
+
+        public const string CurrentUserPropertyName = "CurrentUser";
+        private User currentUser;
+
+        public User CurrentUser
         {
             get
             {
@@ -65,13 +108,22 @@ namespace SlapChat.ViewModel
             get;
             private set;
         }
+
+
       
         public const string FriendsPropertyName = "Friends";
-        public ObservableCollection<Friend> Friends
+        public ObservableCollection<User> Friends
         {
             get
             {
-                return chatService.ReadFriends();
+                if (CurrentUser != null)
+                {
+                    return chatService.ReadFriends(CurrentUser.UserId);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -80,49 +132,53 @@ namespace SlapChat.ViewModel
         {
             get
             {
-                return Friends.Count != 0;
+                return Friends != null && Friends.Count != 0;
             }
         }
 
 
         void contacts_SearchCompleted(object sender, ContactsSearchEventArgs e)
         {
-            Dictionary<Contact, string> contactsMicrosoftAccount = new Dictionary<Contact, string>();
-            List<Friend> matches = e.Results
-                .Where((c) => c.EmailAddresses.Any((a) =>
+            Contacts = e.Results.Select<Contact, User>((c) =>
                 {
-                    if (a.EmailAddress.EndsWith("live.com") || a.EmailAddress.EndsWith("outlook.com"))
-                    {
-                        // If they have multiple Microsoft Accounts, we will just pick the 
-                        // one that comes up last
-                        contactsMicrosoftAccount[c] = a.EmailAddress;
-                        return true;
+                    StringBuilder emailAddresses = new StringBuilder();
+                    foreach(ContactEmailAddress a in c.EmailAddresses){
+                        emailAddresses.Append(a.EmailAddress).Append(" ");
                     }
-                    else
-                    {
-                        return false;
-                    }
-                }))
-                .Select<Contact, Friend>((c) =>
-                {
-                    return new Friend
+                    emailAddresses.Remove(emailAddresses.Length - 1, 1);
+
+                    return new User
                     {
                         Name = c.DisplayName,
-                        MicrosoftAccount = contactsMicrosoftAccount[c]
+                        UserId = c.DisplayName, // Hack this since we don't have other unique ID
+                        EmailAddresses = emailAddresses.ToString()
                     };
                 })
                 .ToList();
 
-            chatService.CreateFriends(matches);
-            
-            // Trigger reload of friends
-            RaisePropertyChanged(FriendsPropertyName);
-            RaisePropertyChanged(HaveFriendsPropertyName);
+            // Databinding won't fire until the first time the user 
+            // interacts with the list pickers, so trigger 
+            // this manually
+            if (Contacts != null && Contacts.Count != 0)
+            {
+                CurrentUser = Contacts.First();
+            }
+        }
 
-            // The databinding wont' refresh until they make
-            // a selection in the list picker, so do the first
-            // selection manually
-            CurrentUser = Friends.First();
+
+
+
+        void FriendsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == CurrentUserPropertyName)
+            {
+                chatService.CreateUser(CurrentUser);
+
+                // Trigger reload of friends
+                RaisePropertyChanged(FriendsPropertyName);
+                //RaisePropertyChanged(HaveFriendsPropertyName);
+
+            }
         }
 
     }

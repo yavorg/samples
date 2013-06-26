@@ -10,14 +10,18 @@ namespace SlapChat.Model
 {
     public class ChatService : IChatService
     {
-        private List<Friend> friends;
+        private Dictionary<string, User> users; 
+        private Dictionary<string, string> emailAddressToUserId;
+        private Dictionary<string, List<string>> friends;
         private List<PhotoRecord> photoRecords;
         private Dictionary<Guid, PhotoContent> photoContents;
         private Timer timer;
 
         public ChatService()
 	    {
-            friends = new List<Friend>();
+            users = new Dictionary<string, User>();
+            emailAddressToUserId = new Dictionary<string, string>();
+            friends = new Dictionary<string, List<string>>();
             photoRecords = new List<PhotoRecord>();
             photoContents = new Dictionary<Guid, PhotoContent>();
 
@@ -49,29 +53,90 @@ namespace SlapChat.Model
                 TimeSpan.FromSeconds(1));
 	    }
 
-        public ObservableCollection<Friend> ReadFriends()
+        public User CreateUser(User user)
         {
-            return new ObservableCollection<Friend>(friends);
-        }
-
-        public ObservableCollection<Friend> CreateFriends(IEnumerable<Friend> newFriends)
-        {
-            foreach (Friend f in newFriends)
+            if (!users.ContainsKey(user.UserId))
             {
-                friends.Add(f);
-                f.Id = friends.IndexOf(f);
+                users[user.UserId] = user;
+                user.Id = users.Count - 1;
             }
-            return new ObservableCollection<Friend>(newFriends);
+            else
+            {
+                user.Id = users[user.UserId].Id;
+                users[user.UserId].Name = user.Name;
+                users[user.UserId].MpnsChannel = user.MpnsChannel;
+
+            }
+
+            foreach (string email in user.EmailAddresses.Split(' '))
+            {
+                emailAddressToUserId[email] = user.UserId;
+            }
+ 
+            return user;
         }
 
+        public ObservableCollection<User> ReadFriends(string userId)
+        {
+            ObservableCollection<User> result = new ObservableCollection<User>();
+            List<string> friendIds = null;
+
+            // Get the array of friends for this user
+            if(friends.ContainsKey(userId)){
+                friendIds = friends[userId];
+            }
+
+            if (friendIds != null && friendIds.Count != 0)
+            {
+                // Return all the friends
+                foreach (string id in friendIds)
+                {
+                    result.Add(users[id]);
+                }
+
+            }
+            return result;
+        }
+
+        public ObservableCollection<User> CreateFriends(string userId, string emailAddresses)
+        {
+            ObservableCollection<User> result = new ObservableCollection<User>();
+            foreach (string email in emailAddresses.Split(' '))
+            {
+                // We have a match for that email address
+                if (emailAddressToUserId.ContainsKey(email))
+                {
+                    User friend = users[emailAddressToUserId[email]];
+                    
+                    // Make sure we don't add ourselves as our friend 
+                    if (!String.Equals(friend.UserId, userId))
+                    {
+                        if (!friends.ContainsKey(userId) || friends[userId] == null)
+                        {
+                            friends[userId] = new List<string>();
+                        }
+
+                        // Ensure no duplicates                    
+                        if (!friends[userId].Contains(friend.UserId))
+                        {
+                            friends[userId].Add(friend.UserId);
+                        }
+
+                        result.Add(friend);
+                    }
+                }
+            }
+
+            return result;
+        }
 
         public ObservableCollection<PhotoRecord> ReadPhotoRecords()
         {
             ObservableCollection<PhotoRecord> results = new ObservableCollection<PhotoRecord>();
             foreach (PhotoRecord p in photoRecords)
             {
-                if (String.Equals(p.RecepientMicrosoftAccount, App.CurrentUser.MicrosoftAccount) ||
-                    String.Equals(p.SenderMicrosoftAccount, App.CurrentUser.MicrosoftAccount))
+                if (String.Equals(p.RecepientMicrosoftAccount, App.CurrentUser.UserId) ||
+                    String.Equals(p.SenderMicrosoftAccount, App.CurrentUser.UserId))
                 {
                     results.Add(p);
                 }
@@ -90,7 +155,7 @@ namespace SlapChat.Model
             record.Id = photoRecords.IndexOf(record);
             record.Sent = DateTimeOffset.Now;
             record.SenderName = App.CurrentUser.Name;
-            record.SenderMicrosoftAccount = App.CurrentUser.MicrosoftAccount;
+            record.SenderMicrosoftAccount = App.CurrentUser.UserId;
             record.PhotoContentId = content.Id;
             record.Expired = false;
 
@@ -163,5 +228,8 @@ namespace SlapChat.Model
         {
             // Not possible to delete photos from MediaLibrary
         }
+
+
+      
     }
 }

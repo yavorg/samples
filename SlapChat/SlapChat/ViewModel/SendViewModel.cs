@@ -33,11 +33,11 @@ namespace SlapChat.ViewModel
                 // they want the first contact in the list.
                 if (SelectedFriend != null)
                 {
-                    p.RecepientMicrosoftAccount = SelectedFriend.MicrosoftAccount;
+                    p.RecepientMicrosoftAccount = SelectedFriend.UserId;
                 }
                 else
                 {
-                    p.RecepientMicrosoftAccount = Friends.First().MicrosoftAccount;
+                    p.RecepientMicrosoftAccount = Friends.First().UserId;
                 }
                  
                 chatService.CreatePhotoRecord(p);
@@ -55,9 +55,9 @@ namespace SlapChat.ViewModel
         }
 
         public const string SelectedFriendPropertyName = "SelectedFriend";
-        private Friend selectedFriend;
+        private User selectedFriend;
 
-        public Friend SelectedFriend
+        public User SelectedFriend
         {
             get
             {
@@ -86,11 +86,12 @@ namespace SlapChat.ViewModel
         }
 
         public const string FriendsPropertyName = "Friends";
-        public ObservableCollection<Friend> Friends
+        public ObservableCollection<User> Friends
         {
             get
             {
-                return chatService.ReadFriends();
+                return chatService.ReadFriends(
+                    ServiceLocator.Current.GetInstance<FriendsViewModel>().CurrentUser.UserId);
             }
         }
 

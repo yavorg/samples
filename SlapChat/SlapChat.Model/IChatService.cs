@@ -9,8 +9,10 @@ namespace SlapChat.Model
 {
     public interface IChatService
     {
-        ObservableCollection<Friend> ReadFriends();
-        ObservableCollection<Friend> CreateFriends(IEnumerable<Friend> newFriends);
+        User CreateUser(User user);
+
+        ObservableCollection<User> ReadFriends(string userId);
+        ObservableCollection<User> CreateFriends(string userId, string emailAddresses);
 
         ObservableCollection<PhotoRecord> ReadPhotoRecords();
         
