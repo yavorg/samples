@@ -10,14 +10,18 @@ namespace SlapChat.Model
 {
     public class ChatService : IChatService
     {
-        private List<Friend> friends;
+        private Dictionary<string, User> users; 
+        private Dictionary<string, string> emailAddressToUserId;
+        private Dictionary<string, List<string>> friends;
         private List<PhotoRecord> photoRecords;
         private Dictionary<Guid, PhotoContent> photoContents;
         private Timer timer;
 
         public ChatService()
 	    {
-            friends = new List<Friend>();
+            users = new Dictionary<string, User>();
+            emailAddressToUserId = new Dictionary<string, string>();
+            friends = new Dictionary<string, List<string>>();
             photoRecords = new List<PhotoRecord>();
             photoContents = new Dictionary<Guid, PhotoContent>();
 
@@ -49,29 +53,64 @@ namespace SlapChat.Model
                 TimeSpan.FromSeconds(1));
 	    }
 
-        public ObservableCollection<Friend> ReadFriends()
+        public User CreateUser(User user)
         {
-            return new ObservableCollection<Friend>(friends);
-        }
-
-        public ObservableCollection<Friend> CreateFriends(IEnumerable<Friend> newFriends)
-        {
-            foreach (Friend f in newFriends)
+            if (!users.ContainsKey(user.UserId))
             {
-                friends.Add(f);
-                f.Id = friends.IndexOf(f);
+                users[user.UserId] = user;
+                user.Id = users.Count - 1;
             }
-            return new ObservableCollection<Friend>(newFriends);
+            else
+            {
+                user.Id = users[user.UserId].Id;
+            }
+
+            users[user.UserId].Name = user.Name;
+            users[user.MpnsChannel].Name = user.MpnsChannel;
+            foreach (string email in user.EmailAddresses.Split(' '))
+            {
+                emailAddressToUserId[email] = user.UserId;
+            }
+ 
+            return user;
         }
 
+        public ObservableCollection<User> ReadFriends(string userId)
+        {
+            ObservableCollection<User> result = new ObservableCollection<User>();
+            List<string> friendIds = friends[userId];
+            if (friendIds != null)
+            {
+                foreach (string id in friendIds)
+                {
+                    result.Add(users[id]);
+                }
+
+            }
+            return result;
+        }
+
+        public ObservableCollection<User> CreateFriends(string userId, string emailAddresses)
+        {
+            ObservableCollection<User> result = new ObservableCollection<User>();
+            foreach (string email in emailAddresses.Split(' '))
+            {
+                if (emailAddressToUserId.ContainsKey(email))
+                {
+                    result.Add(users[emailAddressToUserId[email]]);
+                }
+            }
+
+            return result;
+        }
 
         public ObservableCollection<PhotoRecord> ReadPhotoRecords()
         {
             ObservableCollection<PhotoRecord> results = new ObservableCollection<PhotoRecord>();
             foreach (PhotoRecord p in photoRecords)
             {
-                if (String.Equals(p.RecepientMicrosoftAccount, App.CurrentUser.MicrosoftAccount) ||
-                    String.Equals(p.SenderMicrosoftAccount, App.CurrentUser.MicrosoftAccount))
+                if (String.Equals(p.RecepientMicrosoftAccount, App.CurrentUser.UserId) ||
+                    String.Equals(p.SenderMicrosoftAccount, App.CurrentUser.UserId))
                 {
                     results.Add(p);
                 }
@@ -90,7 +129,7 @@ namespace SlapChat.Model
             record.Id = photoRecords.IndexOf(record);
             record.Sent = DateTimeOffset.Now;
             record.SenderName = App.CurrentUser.Name;
-            record.SenderMicrosoftAccount = App.CurrentUser.MicrosoftAccount;
+            record.SenderMicrosoftAccount = App.CurrentUser.UserId;
             record.PhotoContentId = content.Id;
             record.Expired = false;
 
@@ -163,5 +202,8 @@ namespace SlapChat.Model
         {
             // Not possible to delete photos from MediaLibrary
         }
+
+
+      
     }
 }

@@ -7,8 +7,8 @@ using System.Text;
 
 namespace SlapChat.Model
 {
-    [DataTable("friends")]
-    public class Friend
+    [DataTable("users")]
+    public class User
     {
         public int Id
         {
@@ -23,8 +23,15 @@ namespace SlapChat.Model
             set;
         }
 
-        [JsonProperty(PropertyName = "microsoftaccount")]
-        public string MicrosoftAccount
+        [JsonProperty(PropertyName = "userId")]
+        public string UserId
+        {
+            get;
+            set;
+        }
+
+        [JsonProperty(PropertyName = "emailAddresses")]
+        public string EmailAddresses
         {
             get;
             set;

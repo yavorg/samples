@@ -46,8 +46,7 @@
             <TextBlock Grid.Row="0" Grid.Column="0" FontSize="24" 
                        Text="{Binding Path=LocalizedResources.FriendsPageLoggedInUserText, Source={StaticResource LocalizedStrings}}"/>
             <toolkit:ListPicker  Grid.Row="1" Grid.Column="0"
-                                 ItemsSource="{Binding Friends}"
-                                 IsEnabled="{Binding HaveFriends}"
+                                 ItemsSource="{Binding Contacts}"
                                  SelectedItem="{Binding CurrentUser, Mode=TwoWay}">
                 <toolkit:ListPicker.ItemTemplate>
                     <DataTemplate>

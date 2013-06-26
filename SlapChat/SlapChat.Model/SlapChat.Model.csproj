@@ -35,8 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Friend.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="IChatService.cs" />
+    <Compile Include="MobileServicesConfig.cs" />
     <Compile Include="PhotoContent.cs" />
     <Compile Include="PhotoRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
