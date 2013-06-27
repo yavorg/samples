@@ -44,7 +44,6 @@ namespace SlapChat.Model
 
                             PhotoContent content = null;
                             if(photoContents.TryGetValue(p.PhotoContentSecretId, out content)){
-                                DeletePhoto(content.Uri);
                                 DeletePhotoContent(content.SecretId);
                             }
                         });
@@ -174,7 +173,7 @@ namespace SlapChat.Model
 
         }
 
-        public PhotoContent ReadPhotoContent(string id)
+        public Task<ObservableCollection<PhotoContent>> ReadPhotoContentAsync(string id)
         {
             PhotoContent content = null;
             if(photoContents.TryGetValue(id, out content))
@@ -183,7 +182,9 @@ namespace SlapChat.Model
                 record.Received = DateTimeOffset.Now;
             }
 
-            return content;
+            ObservableCollection<PhotoContent> wrapper = new ObservableCollection<PhotoContent>();
+            wrapper.Add(content);
+            return Task.FromResult<ObservableCollection<PhotoContent>>(wrapper);
 
         }
 
@@ -228,13 +229,6 @@ namespace SlapChat.Model
             }
             return result;
         }
-
-        public void DeletePhoto(Uri location)
-        {
-            // Not possible to delete photos from MediaLibrary
-        }
-
-
       
     }
 }

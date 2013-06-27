@@ -32,12 +32,13 @@ namespace SlapChat.ViewModel
             Timeout.Infinite,
             Timeout.Infinite);
 
-            HideCommand = new RelayCommand(() =>
+            HideCommand = new RelayCommand(async () =>
             
             {
                 timer.Change(TimeSpan.FromSeconds(6), TimeSpan.FromMilliseconds(-1));
-                PhotoContent content = chatService.ReadPhotoContent(
+                var contentList = await chatService.ReadPhotoContentAsync(
                     parentViewModel.SelectedPhoto.PhotoContentSecretId);
+                var content = contentList.FirstOrDefault();
                 if (content != null)
                 {
                     Uri = content.Uri;

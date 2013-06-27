@@ -19,12 +19,11 @@ namespace SlapChat.Model
         Task<ObservableCollection<PhotoRecord>> ReadPhotoRecordsAsync(string userId);
         
         Task CreatePhotoRecordAsync(PhotoRecord record);
-        
-        PhotoContent ReadPhotoContent(string id);
+
+        Task<ObservableCollection<PhotoContent>> ReadPhotoContentAsync(string id);
         void DeletePhotoContent(string id);
 
         Task<HttpResponseMessage> UploadPhotoAsync(Uri location, string secret, Stream photo);
         Stream ReadPhoto(Uri location);
-        void DeletePhoto(Uri location);
     }
 }

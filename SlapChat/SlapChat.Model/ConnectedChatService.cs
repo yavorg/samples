@@ -6,6 +6,8 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.IO;
+using System.Diagnostics;
 
 namespace SlapChat.Model
 {
@@ -65,9 +67,10 @@ namespace SlapChat.Model
             await recordsTable.InsertAsync(record);
         }
 
-        public PhotoContent ReadPhotoContent(string id)
+        public async Task<ObservableCollection<PhotoContent>> ReadPhotoContentAsync(string id)
         {
-            throw new NotImplementedException();
+            return await contentsTable.Where((content) => content.SecretId == id)
+                .ToCollectionAsync<PhotoContent>();
         }
 
         public void DeletePhotoContent(string id)
@@ -90,14 +93,18 @@ namespace SlapChat.Model
             }
         }
 
-        public System.IO.Stream ReadPhoto(Uri location)
+        public Stream ReadPhoto(Uri location)
         {
-            throw new NotImplementedException();
-        }
-
-        public void DeletePhoto(Uri location)
-        {
-            //throw new NotImplementedException();
+            Stream result = null;
+            Debug.WriteLine(location);
+            if (location != null)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    result = client.GetStreamAsync(location).Result;
+                }
+            }
+            return result;
         }
     }
 }
