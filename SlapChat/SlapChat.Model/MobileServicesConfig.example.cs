@@ -26,6 +26,11 @@ namespace SlapChat.Model
             get { return "Live Connect Client ID"; }
         }
 
+        public static string NotificationHubName
+        {
+            get { return "Notification Hub name"; }
+        }
+
         public static Uri NotificationHubUri
         {
             get { return new Uri("http://notificationHubUri"); }
