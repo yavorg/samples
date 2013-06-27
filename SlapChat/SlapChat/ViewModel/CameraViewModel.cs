@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Threading;
 using Microsoft.Devices;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -77,6 +78,7 @@ namespace SlapChat.ViewModel
                     }
 
                 });
+
 
             TakePhotoCommand = new RelayCommand(() =>
                 {
@@ -153,6 +155,7 @@ namespace SlapChat.ViewModel
             get;
             private set;
         }
+
 
         public RelayCommand TakePhotoCommand
         {

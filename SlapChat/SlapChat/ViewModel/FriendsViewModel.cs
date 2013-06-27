@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Text;
+using System.Diagnostics;
+using Microsoft.Phone.Notification;
 
 namespace SlapChat.ViewModel
 {
@@ -42,38 +44,99 @@ namespace SlapChat.ViewModel
                 }
             });
 
+
+            RegisterPushCommand = new RelayCommand(() =>
+            {
+                /// Holds the push channel that is created or found.
+                HttpNotificationChannel pushChannel;
+
+                // The name of our push channel.
+                string channelName = "slapchat";
+
+                // Try to find the push channel.
+                pushChannel = HttpNotificationChannel.Find(channelName);
+
+                // If the channel was not found, then create a new connection to the push service.
+                if (pushChannel == null)
+                {
+                    pushChannel = new HttpNotificationChannel(channelName);
+
+                    // Register for all the events before attempting to open the channel.
+                    pushChannel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(PushChannel_ChannelUriUpdated);
+                    pushChannel.ErrorOccurred += new EventHandler<NotificationChannelErrorEventArgs>(PushChannel_ErrorOccurred);
+
+                    pushChannel.Open();
+
+                    // Bind this new channel for Tile events.
+                    pushChannel.BindToShellToast();
+
+                }
+                else
+                {
+                    // The channel was already open, so just register for all the events.
+                    pushChannel.ChannelUriUpdated += new EventHandler<NotificationChannelUriEventArgs>(PushChannel_ChannelUriUpdated);
+                    pushChannel.ErrorOccurred += new EventHandler<NotificationChannelErrorEventArgs>(PushChannel_ErrorOccurred);
+
+                    Debug.WriteLine(pushChannel.ChannelUri.ToString());
+                    PushChannel = pushChannel.ChannelUri;
+
+                }
+
+            });
+
             RefreshCommand = new RelayCommand(() =>
             {
-                RaisePropertyChanged(ContactsPropertyName);
                 ReadFriends();
             });
 
             PropertyChanged += FriendsViewModel_PropertyChanged;
 
+        }
 
+        public const string PushChannelPropertyName = "PushChannel";
+        private Uri pushChannel;
+
+        public Uri PushChannel
+        {
+            get
+            {
+                return pushChannel;
+            }
+
+            set
+            {
+                if (pushChannel == value)
+                {
+                    return;
+                }
+
+                pushChannel = value;
+                RaisePropertyChanged(PushChannelPropertyName);
+            }
         }
 
         public const string ContactsPropertyName = "Contacts";
         private List<User> contacts;
 
         public List<User> Contacts
-        {
-            get
-            {
+         {
+             get
+             {
                 return contacts;
-            }
+             }
 
-            set
-            {
+             set
+             {
                 if (contacts == value)
-                {
-                    return;
-                }
+                 {
+                     return;
+                 }
 
                 contacts = value;
                 RaisePropertyChanged(ContactsPropertyName);
-            }
-        }
+             }
+         }
+
 
 
         public const string CurrentUserPropertyName = "CurrentUser";
@@ -105,6 +168,12 @@ namespace SlapChat.ViewModel
         }
 
         public RelayCommand RefreshCommand
+        {
+            get;
+            private set;
+        }
+
+        public RelayCommand RegisterPushCommand
         {
             get;
             private set;
@@ -161,9 +230,6 @@ namespace SlapChat.ViewModel
             }
         }
 
-
-
-
         async void FriendsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == CurrentUserPropertyName)
@@ -171,18 +237,35 @@ namespace SlapChat.ViewModel
                 // We haven't seen this user before
                 if (CurrentUser.Id == 0)
                 {
+                    CurrentUser.MpnsChannel = PushChannel.ToString();
                     await chatService.CreateUserAsync(CurrentUser);
                 }
                 ReadFriends();
             }
+            else if (e.PropertyName == PushChannelPropertyName)
+            {
+                RaisePropertyChanged(ContactsPropertyName);
+            }
         }
 
-        private async void ReadFriends(){
+        private async void ReadFriends()
+        {
             if (CurrentUser != null && CurrentUser.UserId != null)
             {
                 Friends = await chatService.ReadFriendsAsync(CurrentUser.UserId);
             }
         }
 
+        void PushChannel_ChannelUriUpdated(object sender, NotificationChannelUriEventArgs e)
+        {
+            Debug.WriteLine(e.ChannelUri.ToString());
+            PushChannel = e.ChannelUri;
+        }
+
+        void PushChannel_ErrorOccurred(object sender, NotificationChannelErrorEventArgs e)
+        {
+            Debug.WriteLine("A push notification {0} error occurred.  {1} ({2}) {3}",
+                    e.ErrorType, e.Message, e.ErrorCode, e.ErrorAdditionalData);
+        }
     }
 }

@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9B3B19FE-2BEC-4AD8-A75D-B5E43C8D6FFC}"
 	ProjectSection(SolutionItems) = preProject
 		ServerScripts\createFriends.post.js = ServerScripts\createFriends.post.js
+		ServerScripts\photoContents.read.js = ServerScripts\photoContents.read.js
 		ServerScripts\photoRecords.insert.js = ServerScripts\photoRecords.insert.js
 		ServerScripts\photoRecords.read.js = ServerScripts\photoRecords.read.js
 		ServerScripts\readFriends.get.js = ServerScripts\readFriends.get.js

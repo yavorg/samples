@@ -14,7 +14,9 @@ namespace SlapChat.View
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            (this.DataContext as FriendsViewModel).RefreshCommand.Execute(e);
+            FriendsViewModel viewModel = (this.DataContext as FriendsViewModel);
+            viewModel.RefreshCommand.Execute(e);
+            viewModel.RegisterPushCommand.Execute(e);
         }
 
     }
