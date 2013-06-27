@@ -164,14 +164,14 @@ namespace SlapChat.ViewModel
 
 
 
-        void FriendsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        async void FriendsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == CurrentUserPropertyName)
             {
                 // We haven't seen this user before
                 if (CurrentUser.Id == 0)
                 {
-                    chatService.CreateUserAsync(CurrentUser);
+                    await chatService.CreateUserAsync(CurrentUser);
                 }
                 ReadFriends();
             }

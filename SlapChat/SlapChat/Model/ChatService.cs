@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Media;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace SlapChat.Model
 {
@@ -54,7 +55,7 @@ namespace SlapChat.Model
                 TimeSpan.FromSeconds(1));
 	    }
 
-        public void CreateUserAsync(User user)
+        public Task CreateUserAsync(User user)
         {
             if (!users.ContainsKey(user.UserId))
             {
@@ -73,6 +74,8 @@ namespace SlapChat.Model
             {
                 emailAddressToUserId[email] = user.UserId;
             }
+
+            return Task.FromResult(0);
 
         }
 
@@ -144,7 +147,7 @@ namespace SlapChat.Model
             return Task.FromResult<ObservableCollection<PhotoRecord>>(results);
         }
 
-        public void CreatePhotoRecordAsync(PhotoRecord record)
+        public Task CreatePhotoRecordAsync(PhotoRecord record)
         {
             PhotoContent content = new PhotoContent();
             content.SecretId = Guid.NewGuid().ToString();
@@ -166,6 +169,9 @@ namespace SlapChat.Model
             record.Uri = content.Uri;
 
             content.PhotoRecordId = record.Id;
+
+            return Task.FromResult(0);
+
         }
 
         public PhotoContent ReadPhotoContent(string id)
@@ -186,13 +192,15 @@ namespace SlapChat.Model
             photoContents.Remove(id);
         }
 
-        public void UploadPhoto(Uri location, string secret, Stream photo)
+        public Task<HttpResponseMessage> UploadPhotoAsync(Uri location, string secret, Stream photo)
         {
             using(MediaLibrary ml = new MediaLibrary())
             {
                 photo.Position = 0;
                 ml.SavePictureToCameraRoll(location.ToString(), photo);
             }
+
+            return Task.FromResult<HttpResponseMessage>(new HttpResponseMessage());
         }
 
         public Stream ReadPhoto(Uri location)

@@ -25,7 +25,7 @@ namespace SlapChat.ViewModel
             ResetImageSource();
 
 
-            SendPhoto = new RelayCommand(() =>
+            SendPhoto = new RelayCommand(async () =>
             {
                 PhotoRecord p = new PhotoRecord();
                 
@@ -42,9 +42,10 @@ namespace SlapChat.ViewModel
 
                 p.SenderUserId = App.CurrentUser.UserId;
                 p.SenderName = App.CurrentUser.Name;
-                 
-                chatService.CreatePhotoRecordAsync(p);
-                chatService.UploadPhoto(p.Uri, p.UploadKey, parentViewModel.Image);
+
+                await chatService.CreatePhotoRecordAsync(p);
+                System.Net.Http.HttpResponseMessage m =
+                await chatService.UploadPhotoAsync(p.Uri, p.UploadKey, parentViewModel.Image);
 
                 App.RootFrame.Navigate(new Uri("/View/PhotosPage.xaml", UriKind.RelativeOrAbsolute));
 

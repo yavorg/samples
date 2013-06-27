@@ -25,10 +25,11 @@ namespace SlapChat.Model
             recordsTable = client.GetTable<PhotoRecord>();
         }
 
-        public async void CreateUserAsync(User user)
+        public async Task CreateUserAsync(User user)
         {
             await usersTable.InsertAsync(user);
         }
+
 
         public async Task<ObservableCollection<User>> ReadFriendsAsync(string userId)
         {
@@ -59,7 +60,7 @@ namespace SlapChat.Model
             }).ToCollectionAsync<PhotoRecord>();
         }
 
-        public async void CreatePhotoRecordAsync(PhotoRecord record)
+        public async Task CreatePhotoRecordAsync(PhotoRecord record)
         {
             await recordsTable.InsertAsync(record);
         }
@@ -74,9 +75,19 @@ namespace SlapChat.Model
             //throw new NotImplementedException();
         }
 
-        public void UploadPhoto(Uri location, string secret, System.IO.Stream photo)
+        public async Task<HttpResponseMessage> UploadPhotoAsync(Uri location, string secret, System.IO.Stream photo)
         {
-            //throw new NotImplementedException();
+            using (var client = new HttpClient())
+            {
+                UriBuilder uri = new UriBuilder(location);
+                uri.Query = secret;
+
+                photo.Position = 0;
+                var content = new StreamContent(photo);
+                content.Headers.Add("x-ms-blob-type", "BlockBlob");
+                content.Headers.Add("Content-Type", "image/jpeg");
+                return await client.PutAsync(uri.Uri, content);
+            }
         }
 
         public System.IO.Stream ReadPhoto(Uri location)
