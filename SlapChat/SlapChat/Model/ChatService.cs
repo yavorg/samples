@@ -15,7 +15,7 @@ namespace SlapChat.Model
         private Dictionary<string, string> emailAddressToUserId;
         private Dictionary<string, List<string>> friends;
         private List<PhotoRecord> photoRecords;
-        private Dictionary<Guid, PhotoContent> photoContents;
+        private Dictionary<string, PhotoContent> photoContents;
         private Timer timer;
 
         public ChatService()
@@ -24,7 +24,7 @@ namespace SlapChat.Model
             emailAddressToUserId = new Dictionary<string, string>();
             friends = new Dictionary<string, List<string>>();
             photoRecords = new List<PhotoRecord>();
-            photoContents = new Dictionary<Guid, PhotoContent>();
+            photoContents = new Dictionary<string, PhotoContent>();
 
             // Timer to expire any photos that were read more than
             // 30 seconds ago
@@ -42,9 +42,9 @@ namespace SlapChat.Model
                             p.Expired = true;
 
                             PhotoContent content = null;
-                            if(photoContents.TryGetValue(p.PhotoContentId, out content)){
+                            if(photoContents.TryGetValue(p.PhotoContentSecretId, out content)){
                                 DeletePhoto(content.Uri);
-                                DeletePhotoContent(content.Id);
+                                DeletePhotoContent(content.SecretId);
                             }
                         });
                    
@@ -130,66 +130,63 @@ namespace SlapChat.Model
             return Task.FromResult<ObservableCollection<User>>(result);
         }
 
-        public ObservableCollection<PhotoRecord> ReadPhotoRecords()
+        public Task<ObservableCollection<PhotoRecord>> ReadPhotoRecordsAsync(string userId)
         {
             ObservableCollection<PhotoRecord> results = new ObservableCollection<PhotoRecord>();
             foreach (PhotoRecord p in photoRecords)
             {
-                if (String.Equals(p.RecepientMicrosoftAccount, App.CurrentUser.UserId) ||
-                    String.Equals(p.SenderMicrosoftAccount, App.CurrentUser.UserId))
+                if (String.Equals(p.RecepientUserId, userId) ||
+                    String.Equals(p.SenderUserId, userId))
                 {
                     results.Add(p);
                 }
             }
-            return results;
+            return Task.FromResult<ObservableCollection<PhotoRecord>>(results);
         }
 
-        public PhotoRecord CreatePhotoRecord(PhotoRecord record)
+        public void CreatePhotoRecordAsync(PhotoRecord record)
         {
             PhotoContent content = new PhotoContent();
-            content.Id = Guid.NewGuid();
+            content.SecretId = Guid.NewGuid().ToString();
             content.Uri = new Uri(String.Format("http://{0}", Guid.NewGuid()));
-            photoContents[content.Id] = content;
+            photoContents[content.SecretId] = content;
+            content.Id = photoContents.Count - 1;
 
             photoRecords.Add(record);
             record.Id = photoRecords.IndexOf(record);
             record.Sent = DateTimeOffset.Now;
             record.SenderName = App.CurrentUser.Name;
-            record.SenderMicrosoftAccount = App.CurrentUser.UserId;
-            record.PhotoContentId = content.Id;
+            record.SenderUserId = App.CurrentUser.UserId;
+            record.PhotoContentSecretId = content.SecretId;
             record.Expired = false;
 
-            content.PhotoRecordId = record.Id;
+            // These two are returned but not stored in the 
+            // datastore, we delete them later
+            record.UploadKey = String.Empty; // Doesn't matter in this case
+            record.Uri = content.Uri;
 
-            return record;
+            content.PhotoRecordId = record.Id;
         }
 
-        public PhotoContent ReadPhotoContent(Guid id)
+        public PhotoContent ReadPhotoContent(string id)
         {
             PhotoContent content = null;
             if(photoContents.TryGetValue(id, out content))
             {
-                if (content.Uploaded == true)
-                {
-                    PhotoRecord record = photoRecords[content.PhotoRecordId];
-                    record.Received = DateTimeOffset.Now;
-                }
-                else
-                {
-                    content.Uploaded = true;
-                }
+                PhotoRecord record = photoRecords[content.PhotoRecordId];
+                record.Received = DateTimeOffset.Now;
             }
 
             return content;
 
         }
 
-        public void DeletePhotoContent(Guid id)
+        public void DeletePhotoContent(string id)
         {
             photoContents.Remove(id);
         }
 
-        public void UploadPhoto(Uri location, Stream photo)
+        public void UploadPhoto(Uri location, string secret, Stream photo)
         {
             using(MediaLibrary ml = new MediaLibrary())
             {

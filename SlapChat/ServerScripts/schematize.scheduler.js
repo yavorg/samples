@@ -1,4 +1,5 @@
 function schematize() {
+
     var usersTable = tables.getTable('users'),
         friendsTable = tables.getTable('friends'),
         emailsTable = tables.getTable('emails'),
@@ -22,16 +23,20 @@ function schematize() {
         userId: 'Delete me'
     });
 
-    /*
     photoContentsTable.insert({
-    	uri: 'Delete me',
-        uploaded: false,
-        
+        secretId: 'Delete me',
+        uri: 'Delete me',
+        photoRecordId: 0
+
     });
-    
-    photoRecordsTable.inert({});
-        */
 
-
-
+    photoRecordsTable.insert({
+        senderUserId: 'Delete me',
+        senderName: 'Delete me',
+        recepientUserId: 'Delete me',
+        photoContentSecretId: 'Delete me',
+        sent: new Date(),
+        received: new Date(),
+        expired: false
+    });
 }

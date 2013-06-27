@@ -131,15 +131,6 @@ namespace SlapChat.ViewModel
             }
         }
 
-        public const string HaveFriendsPropertyName = "HaveFriends";
-        public bool HaveFriends
-        {
-            get
-            {
-                return Friends != null && Friends.Count != 0;
-            }
-        }
-
 
         void contacts_SearchCompleted(object sender, ContactsSearchEventArgs e)
         {

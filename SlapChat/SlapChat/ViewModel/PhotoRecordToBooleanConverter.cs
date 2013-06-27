@@ -15,7 +15,7 @@ namespace SlapChat.ViewModel
         {
             bool result = true;
             PhotoRecord record = value as PhotoRecord;
-            if (String.Equals(record.SenderMicrosoftAccount, App.CurrentUser.UserId)
+            if (String.Equals(record.SenderUserId, App.CurrentUser.UserId)
                 || record.Expired == true)
             {
                 result = false;

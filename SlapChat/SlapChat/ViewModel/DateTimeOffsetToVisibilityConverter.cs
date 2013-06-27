@@ -13,7 +13,7 @@ namespace SlapChat.ViewModel
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             // Check for default value
-            if((DateTimeOffset)value == new DateTimeOffset()){
+            if(((DateTimeOffset)value).Year == 1){
                 return Visibility.Collapsed;
             } else {
                 return Visibility.Visible;

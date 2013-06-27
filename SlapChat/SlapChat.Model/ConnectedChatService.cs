@@ -51,27 +51,30 @@ namespace SlapChat.Model
                 });
         }
 
-        public ObservableCollection<PhotoRecord> ReadPhotoRecords()
+        public async Task<ObservableCollection<PhotoRecord>> ReadPhotoRecordsAsync(string userId)
+        {
+            return await recordsTable.WithParameters(new Dictionary<string, string>
+            {
+                {"userId", userId}
+            }).ToCollectionAsync<PhotoRecord>();
+        }
+
+        public async void CreatePhotoRecordAsync(PhotoRecord record)
+        {
+            await recordsTable.InsertAsync(record);
+        }
+
+        public PhotoContent ReadPhotoContent(string id)
         {
             throw new NotImplementedException();
         }
 
-        public PhotoRecord CreatePhotoRecord(PhotoRecord record)
-        {
-            throw new NotImplementedException();
-        }
-
-        public PhotoContent ReadPhotoContent(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeletePhotoContent(Guid id)
+        public void DeletePhotoContent(string id)
         {
             //throw new NotImplementedException();
         }
 
-        public void UploadPhoto(Uri location, System.IO.Stream photo)
+        public void UploadPhoto(Uri location, string secret, System.IO.Stream photo)
         {
             //throw new NotImplementedException();
         }

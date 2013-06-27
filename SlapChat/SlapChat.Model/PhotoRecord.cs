@@ -13,8 +13,8 @@ namespace SlapChat.Model
             set;
         }
 
-        [JsonProperty(PropertyName = "senderMicrosoftAccount")]
-        public string SenderMicrosoftAccount
+        [JsonProperty(PropertyName = "senderUserId")]
+        public string SenderUserId
         {
             get;
             set;
@@ -27,23 +27,15 @@ namespace SlapChat.Model
             set;
         }
 
-        [JsonProperty(PropertyName = "recepientMicrosoftAccount")]
-        public string RecepientMicrosoftAccount
+        [JsonProperty(PropertyName = "recepientUserId")]
+        public string RecepientUserId
         {
             get;
             set;
         }
 
-        [JsonProperty(PropertyName = "recepientName")]
-        public string RecepientName
-        {
-            get;
-            set;
-        }
-
-
-        [JsonProperty(PropertyName = "photoContentId")]
-        public Guid PhotoContentId
+        [JsonProperty(PropertyName = "photoContentSecretId")]
+        public string PhotoContentSecretId
         {
             get;
             set;
@@ -58,6 +50,20 @@ namespace SlapChat.Model
 
         [JsonProperty(PropertyName = "received")]
         public DateTimeOffset Received
+        {
+            get;
+            set;
+        }
+
+        [JsonProperty(PropertyName = "uri")]
+        public Uri Uri
+        {
+            get;
+            set;
+        }
+
+        [JsonProperty(PropertyName = "uploadKey")]
+        public string UploadKey
         {
             get;
             set;

@@ -7,7 +7,14 @@ namespace SlapChat.Model
     [DataTable("photoContents")]
     public class PhotoContent
     {
-        public Guid Id
+        public int Id
+        {
+            get;
+            set;
+        }
+
+        [JsonProperty(PropertyName = "secretId")]
+        public string SecretId
         {
             get;
             set;
@@ -15,13 +22,6 @@ namespace SlapChat.Model
 
         [JsonProperty(PropertyName = "uri")]
         public Uri Uri
-        {
-            get;
-            set;
-        }
-
-        [JsonProperty(PropertyName = "uploaded")]
-        public bool Uploaded
         {
             get;
             set;

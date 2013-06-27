@@ -33,16 +33,18 @@ namespace SlapChat.ViewModel
                 // they want the first contact in the list.
                 if (SelectedFriend != null)
                 {
-                    p.RecepientMicrosoftAccount = SelectedFriend.UserId;
+                    p.RecepientUserId = SelectedFriend.UserId;
                 }
                 else
                 {
-                    p.RecepientMicrosoftAccount = Friends.First().UserId;
+                    p.RecepientUserId = Friends.First().UserId;
                 }
+
+                p.SenderUserId = App.CurrentUser.UserId;
+                p.SenderName = App.CurrentUser.Name;
                  
-                chatService.CreatePhotoRecord(p);
-                PhotoContent content = chatService.ReadPhotoContent(p.PhotoContentId);
-                chatService.UploadPhoto(content.Uri, parentViewModel.Image);
+                chatService.CreatePhotoRecordAsync(p);
+                chatService.UploadPhoto(p.Uri, p.UploadKey, parentViewModel.Image);
 
                 App.RootFrame.Navigate(new Uri("/View/PhotosPage.xaml", UriKind.RelativeOrAbsolute));
 
@@ -50,9 +52,7 @@ namespace SlapChat.ViewModel
 
             RefreshCommand = new RelayCommand(async () =>
             {
-                Friends = await chatService.ReadFriendsAsync(
-                    ServiceLocator.Current.GetInstance<FriendsViewModel>().CurrentUser.UserId
-                    );
+                Friends = await chatService.ReadFriendsAsync(App.CurrentUser.UserId);
             });
         }
 
@@ -75,15 +75,6 @@ namespace SlapChat.ViewModel
 
                 selectedFriend = value;
                 RaisePropertyChanged(SelectedFriendPropertyName);
-            }
-        }
-
-        public const string HaveFriendsPropertyName = "HaveFriends";
-        public bool HaveFriends
-        {
-            get
-            {
-                return Friends != null && Friends.Count != 0;
             }
         }
 

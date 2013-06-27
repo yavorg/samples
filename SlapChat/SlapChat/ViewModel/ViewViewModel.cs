@@ -37,7 +37,7 @@ namespace SlapChat.ViewModel
             {
                 timer.Change(TimeSpan.FromSeconds(6), TimeSpan.FromMilliseconds(-1));
                 PhotoContent content = chatService.ReadPhotoContent(
-                    parentViewModel.SelectedPhoto.PhotoContentId);
+                    parentViewModel.SelectedPhoto.PhotoContentSecretId);
                 if (content != null)
                 {
                     Uri = content.Uri;

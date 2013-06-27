@@ -15,14 +15,14 @@ namespace SlapChat.Model
         Task<ObservableCollection<User>> ReadFriendsAsync(string userId);
         Task<ObservableCollection<User>> CreateFriendsAsync(string userId, string emailAddresses);
 
-        ObservableCollection<PhotoRecord> ReadPhotoRecords();
+        Task<ObservableCollection<PhotoRecord>> ReadPhotoRecordsAsync(string userId);
         
-        PhotoRecord CreatePhotoRecord(PhotoRecord record);
+        void CreatePhotoRecordAsync(PhotoRecord record);
         
-        PhotoContent ReadPhotoContent(Guid id);
-        void DeletePhotoContent(Guid id);
+        PhotoContent ReadPhotoContent(string id);
+        void DeletePhotoContent(string id);
 
-        void UploadPhoto(Uri location, Stream photo);
+        void UploadPhoto(Uri location, string secret, Stream photo);
         Stream ReadPhoto(Uri location);
         void DeletePhoto(Uri location);
     }

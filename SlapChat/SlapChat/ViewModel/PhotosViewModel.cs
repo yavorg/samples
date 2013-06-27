@@ -21,9 +21,9 @@ namespace SlapChat.ViewModel
         {
             chatService = ServiceLocator.Current.GetInstance<IChatService>();
 
-            RefreshCommand = new RelayCommand(() =>
+            RefreshCommand = new RelayCommand(async () =>
             {
-                RaisePropertyChanged(PhotosPropertyName);
+                Photos = await chatService.ReadPhotoRecordsAsync(App.CurrentUser.UserId);
             });
 
             ViewPhoto = new RelayCommand(() =>
@@ -33,11 +33,23 @@ namespace SlapChat.ViewModel
         }
 
         public const string PhotosPropertyName = "Photos";
+        private ObservableCollection<PhotoRecord> photos;
         public ObservableCollection<PhotoRecord> Photos
         {
             get
             {
-                return chatService.ReadPhotoRecords();
+                return photos;
+            }
+
+            private set
+            {
+                if (photos == value)
+                {
+                    return;
+                }
+
+                photos = value;
+                RaisePropertyChanged(PhotosPropertyName);
             }
         }
 
