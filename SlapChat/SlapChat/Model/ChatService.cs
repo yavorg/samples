@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net.Http;
+using Microsoft.WindowsAzure.Messaging;
 
 namespace SlapChat.Model
 {
@@ -229,6 +230,5 @@ namespace SlapChat.Model
             }
             return result;
         }
-      
     }
 }

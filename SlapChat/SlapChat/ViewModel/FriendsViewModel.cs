@@ -11,16 +11,19 @@ using System.Windows.Controls;
 using System.Text;
 using System.Diagnostics;
 using Microsoft.Phone.Notification;
+using Microsoft.WindowsAzure.Messaging;
 
 namespace SlapChat.ViewModel
 {
     public class FriendsViewModel : ViewModelBase
     {
         private IChatService chatService;
+        private INotificationService notificationService;
 
         public FriendsViewModel()
         {
             chatService = ServiceLocator.Current.GetInstance<IChatService>();
+            notificationService = ServiceLocator.Current.GetInstance<INotificationService>();
 
             Contacts contacts = new Contacts();
             contacts.SearchCompleted += contacts_SearchCompleted;
@@ -206,10 +209,14 @@ namespace SlapChat.ViewModel
             Contacts = e.Results.Select<Contact, User>((c) =>
                 {
                     StringBuilder emailAddresses = new StringBuilder();
-                    foreach(ContactEmailAddress a in c.EmailAddresses){
-                        emailAddresses.Append(a.EmailAddress).Append(" ");
+                    if (c.EmailAddresses.Count() != 0)
+                    {
+                        foreach (ContactEmailAddress a in c.EmailAddresses)
+                        {
+                            emailAddresses.Append(a.EmailAddress).Append(" ");
+                        }
+                        emailAddresses.Remove(emailAddresses.Length - 1, 1);
                     }
-                    emailAddresses.Remove(emailAddresses.Length - 1, 1);
 
                     return new User
                     {
@@ -245,8 +252,11 @@ namespace SlapChat.ViewModel
             else if (e.PropertyName == PushChannelPropertyName)
             {
                 RaisePropertyChanged(ContactsPropertyName);
+                notificationService.RegisterNotificationHubs(PushChannel.ToString());
             }
         }
+
+      
 
         private async void ReadFriends()
         {

@@ -19,6 +19,7 @@ function insert(item, user, request) {
 
         request.execute({
             success: function () {
+
                 content.photoRecordId = item.id;
                 contentsTable.insert(content, {
                     success: function () {
@@ -30,12 +31,31 @@ function insert(item, user, request) {
                         item.uri = content.uri;
 
                         request.respond();
+
+                        sendPushNotification(item.recepientUserId);
                     }
                 });
             }
         });
     });
 }
+
+function sendPushNotification(id) {
+    var usersTable = tables.getTable('users');
+    usersTable.where({
+        userId: id
+    }).read({
+        success: function (results) {
+            results.forEach(function (result) {
+                push.mpns.sendToast(result.mpnsChannel, {
+                    text1: 'SlapChat',
+                    text2: 'You have a new photo!'
+                });
+            });
+        }
+    });
+}
+
 
 function fakeGuid() {
     return new Date().getTime() + '' + Math.random();
@@ -45,10 +65,10 @@ function prepareUpload(callback) {
     var azure = require('azure');
     var qs = require('querystring');
 
-    var accountName = '';
+    var accountName = 'slapchat';
     var containerName = 'photos';
     var itemName = fakeGuid();
-    var accountKey = '';
+    var accountKey = '3jRHHcj/3IxqFFlAdGICpKreiXMpVu5nO1lAqhWySUSKp593IIuSQGNXl5rCL8j2Hm+9bKEvO7msMYYb0iu6dw==';
     var host = accountName + '.blob.core.windows.net';
 
     var blobService = azure.createBlobService(accountName, accountKey, host);
