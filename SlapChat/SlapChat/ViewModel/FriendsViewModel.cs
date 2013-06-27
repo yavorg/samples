@@ -35,17 +35,17 @@ namespace SlapChat.ViewModel
                     }
                     emailAddresses.Remove(emailAddresses.Length - 1, 1);
 
-                    chatService.CreateFriends(CurrentUser.UserId, 
+                    chatService.CreateFriendsAsync(CurrentUser.UserId, 
                         emailAddresses.ToString());
 
-                    RaisePropertyChanged(FriendsPropertyName);
+                    ReadFriends();
                 }
             });
 
             RefreshCommand = new RelayCommand(() =>
             {
                 RaisePropertyChanged(ContactsPropertyName);
-                RaisePropertyChanged(FriendsPropertyName);
+                ReadFriends();
             });
 
             PropertyChanged += FriendsViewModel_PropertyChanged;
@@ -110,21 +110,24 @@ namespace SlapChat.ViewModel
             private set;
         }
 
-
-      
         public const string FriendsPropertyName = "Friends";
+        public ObservableCollection<User> friends;
         public ObservableCollection<User> Friends
         {
             get
             {
-                if (CurrentUser != null)
+                return friends;
+            }
+
+            private set
+            {
+                if (friends == value)
                 {
-                    return chatService.ReadFriends(CurrentUser.UserId);
+                    return;
                 }
-                else
-                {
-                    return null;
-                }
+
+                friends = value;
+                RaisePropertyChanged(FriendsPropertyName);
             }
         }
 
@@ -152,6 +155,7 @@ namespace SlapChat.ViewModel
                     {
                         Name = c.DisplayName,
                         UserId = c.DisplayName, // Hack this since we don't have other unique ID
+                        MpnsChannel = String.Empty,                        
                         EmailAddresses = emailAddresses.ToString()
                     };
                 })
@@ -173,10 +177,19 @@ namespace SlapChat.ViewModel
         {
             if (e.PropertyName == CurrentUserPropertyName)
             {
-                chatService.CreateUser(CurrentUser);
+                // We haven't seen this user before
+                if (CurrentUser.Id == 0)
+                {
+                    chatService.CreateUserAsync(CurrentUser);
+                }
+                ReadFriends();
+            }
+        }
 
-                // Trigger reload of friends
-                RaisePropertyChanged(FriendsPropertyName);
+        private async void ReadFriends(){
+            if (CurrentUser != null && CurrentUser.UserId != null)
+            {
+                Friends = await chatService.ReadFriendsAsync(CurrentUser.UserId);
             }
         }
 

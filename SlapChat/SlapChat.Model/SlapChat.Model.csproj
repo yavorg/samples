@@ -35,6 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ConnectedChatService.cs" />
     <Compile Include="User.cs" />
     <Compile Include="IChatService.cs" />
     <Compile Include="MobileServicesConfig.cs" />

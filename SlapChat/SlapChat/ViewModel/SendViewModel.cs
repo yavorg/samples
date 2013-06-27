@@ -48,9 +48,11 @@ namespace SlapChat.ViewModel
 
             });
 
-            RefreshCommand = new RelayCommand(() =>
+            RefreshCommand = new RelayCommand(async () =>
             {
-                RaisePropertyChanged(FriendsPropertyName);
+                Friends = await chatService.ReadFriendsAsync(
+                    ServiceLocator.Current.GetInstance<FriendsViewModel>().CurrentUser.UserId
+                    );
             });
         }
 
@@ -81,17 +83,28 @@ namespace SlapChat.ViewModel
         {
             get
             {
-                return Friends.Count != 0;
+                return Friends != null && Friends.Count != 0;
             }
         }
 
         public const string FriendsPropertyName = "Friends";
+        public ObservableCollection<User> friends;
         public ObservableCollection<User> Friends
         {
             get
             {
-                return chatService.ReadFriends(
-                    ServiceLocator.Current.GetInstance<FriendsViewModel>().CurrentUser.UserId);
+                return friends;
+            }
+
+            private set
+            {
+                if (friends == value)
+                {
+                    return;
+                }
+
+                friends = value;
+                RaisePropertyChanged(FriendsPropertyName);
             }
         }
 

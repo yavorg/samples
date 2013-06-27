@@ -11,6 +11,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BDC2B8
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9B3B19FE-2BEC-4AD8-A75D-B5E43C8D6FFC}"
+	ProjectSection(SolutionItems) = preProject
+		ServerScripts\createFriends.post.js = ServerScripts\createFriends.post.js
+		ServerScripts\readFriends.get.js = ServerScripts\readFriends.get.js
+		ServerScripts\schematize.scheduler.js = ServerScripts\schematize.scheduler.js
+		ServerScripts\users.insert.js = ServerScripts\users.insert.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

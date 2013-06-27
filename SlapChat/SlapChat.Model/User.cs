@@ -37,7 +37,7 @@ namespace SlapChat.Model
             set;
         }
 
-        [JsonProperty(PropertyName = "mpnschannel")]
+        [JsonProperty(PropertyName = "mpnsChannel")]
         public string MpnsChannel
         {
             get;

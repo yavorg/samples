@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using Microsoft.Xna.Framework.Media;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SlapChat.Model
 {
@@ -53,7 +54,7 @@ namespace SlapChat.Model
                 TimeSpan.FromSeconds(1));
 	    }
 
-        public User CreateUser(User user)
+        public void CreateUserAsync(User user)
         {
             if (!users.ContainsKey(user.UserId))
             {
@@ -72,11 +73,10 @@ namespace SlapChat.Model
             {
                 emailAddressToUserId[email] = user.UserId;
             }
- 
-            return user;
+
         }
 
-        public ObservableCollection<User> ReadFriends(string userId)
+        public Task<ObservableCollection<User>> ReadFriendsAsync(string userId)
         {
             ObservableCollection<User> result = new ObservableCollection<User>();
             List<string> friendIds = null;
@@ -95,10 +95,10 @@ namespace SlapChat.Model
                 }
 
             }
-            return result;
+            return Task.FromResult<ObservableCollection<User>>(result);
         }
 
-        public ObservableCollection<User> CreateFriends(string userId, string emailAddresses)
+        public Task<ObservableCollection<User>> CreateFriendsAsync(string userId, string emailAddresses)
         {
             ObservableCollection<User> result = new ObservableCollection<User>();
             foreach (string email in emailAddresses.Split(' '))
@@ -127,7 +127,7 @@ namespace SlapChat.Model
                 }
             }
 
-            return result;
+            return Task.FromResult<ObservableCollection<User>>(result);
         }
 
         public ObservableCollection<PhotoRecord> ReadPhotoRecords()

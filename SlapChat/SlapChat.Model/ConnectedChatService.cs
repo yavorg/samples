@@ -3,32 +3,55 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace SlapChat.Model
 {
-    class ConnectedChatService : IChatService
+    public class ConnectedChatService : IChatService
     {
         private MobileServiceClient client;
-        private IMobileServiceTable<User> friends;
+        private IMobileServiceTable<User> usersTable;
+        private IMobileServiceTable<PhotoContent> contentsTable;
+        private IMobileServiceTable<PhotoRecord> recordsTable;
 
         public ConnectedChatService()
         {
             client = new MobileServiceClient(MobileServiceConfig.ApplicationUri,
                 MobileServiceConfig.ApplicationKey);
-            friends = client.GetTable<User>();
+            usersTable = client.GetTable<User>();
+            contentsTable = client.GetTable<PhotoContent>();
+            recordsTable = client.GetTable<PhotoRecord>();
         }
 
-        public System.Collections.ObjectModel.ObservableCollection<User> ReadFriends()
+        public async void CreateUserAsync(User user)
         {
-            
+            await usersTable.InsertAsync(user);
         }
 
-        public System.Collections.ObjectModel.ObservableCollection<User> CreateFriends(IEnumerable<User> newFriends)
+        public async Task<ObservableCollection<User>> ReadFriendsAsync(string userId)
         {
-            throw new NotImplementedException();
+            return await client.InvokeApiAsync<ObservableCollection<User>>("readfriends",
+                HttpMethod.Get,
+                new Dictionary<string, string>
+                {
+                    {"userId", userId}
+                });
         }
 
-        public System.Collections.ObjectModel.ObservableCollection<PhotoRecord> ReadPhotoRecords()
+        public async Task<ObservableCollection<User>> CreateFriendsAsync(string userId, string emailAddresses)
+        {
+            return await client.InvokeApiAsync<ObservableCollection<User>>("createfriends",
+                HttpMethod.Post,
+                new Dictionary<string, string>
+                {
+                    {"emailAddresses", emailAddresses},
+                    {"userId", userId}
+                });
+        }
+
+        public ObservableCollection<PhotoRecord> ReadPhotoRecords()
         {
             throw new NotImplementedException();
         }
@@ -45,12 +68,12 @@ namespace SlapChat.Model
 
         public void DeletePhotoContent(Guid id)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void UploadPhoto(Uri location, System.IO.Stream photo)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public System.IO.Stream ReadPhoto(Uri location)
@@ -60,7 +83,7 @@ namespace SlapChat.Model
 
         public void DeletePhoto(Uri location)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
