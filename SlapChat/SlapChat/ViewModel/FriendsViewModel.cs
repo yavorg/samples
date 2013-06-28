@@ -208,7 +208,7 @@ namespace SlapChat.ViewModel
         }
 
 
-        void contacts_SearchCompleted(object sender, ContactsSearchEventArgs e)
+        async void contacts_SearchCompleted(object sender, ContactsSearchEventArgs e)
         {
             Contacts = e.Results.Select<Contact, User>((c) =>
                 {
@@ -235,19 +235,19 @@ namespace SlapChat.ViewModel
             // Databinding won't fire until the first time the user 
             // interacts with the list pickers, so trigger 
             // this manually
-            if (Contacts != null && Contacts.Count != 0)
-            {
-                CurrentUser = Contacts.First();
-            }
+            //if (Contacts != null && Contacts.Count != 0)
+            //{
+            //    CurrentUser = Contacts.First();
+            //}
 
-            // await Authenticate();
+            await Authenticate();
         }
 
 
         private LiveConnectSession session;
         private async System.Threading.Tasks.Task Authenticate()
         {
-            var liveIdClient = new LiveAuthClient(MobileServiceConfig.ApplicationUri);
+            var liveIdClient = new LiveAuthClient(MobileServiceConfig.LiveClientId);
 
             while (session == null)
             {
