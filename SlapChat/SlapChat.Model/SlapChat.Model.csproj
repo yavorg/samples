@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ConnectedChatService.cs" />
+    <Compile Include="IAuthenticationService.cs" />
     <Compile Include="INotificationService.cs" />
     <Compile Include="User.cs" />
     <Compile Include="IChatService.cs" />

@@ -42,8 +42,9 @@ namespace SlapChat.ViewModel
             SimpleIoc.Default.Register<PhotosViewModel>();
             SimpleIoc.Default.Register<SendViewModel>();
             SimpleIoc.Default.Register<ViewViewModel>();
-            SimpleIoc.Default.Register<IChatService, ChatService>();
+            SimpleIoc.Default.Register<IChatService, ConnectedChatService>();
             SimpleIoc.Default.Register<INotificationService, NotificationService>();
+            SimpleIoc.Default.Register<IAuthenticationService, AuthenticationService>();
             
         }
 

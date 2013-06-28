@@ -12,6 +12,8 @@ using System.Text;
 using System.Diagnostics;
 using Microsoft.Phone.Notification;
 using Microsoft.WindowsAzure.Messaging;
+using Microsoft.Live;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace SlapChat.ViewModel
 {
@@ -19,11 +21,13 @@ namespace SlapChat.ViewModel
     {
         private IChatService chatService;
         private INotificationService notificationService;
+        private IAuthenticationService authenticationService;
 
         public FriendsViewModel()
         {
             chatService = ServiceLocator.Current.GetInstance<IChatService>();
             notificationService = ServiceLocator.Current.GetInstance<INotificationService>();
+            authenticationService = ServiceLocator.Current.GetInstance<IAuthenticationService>();
 
             Contacts contacts = new Contacts();
             contacts.SearchCompleted += contacts_SearchCompleted;
@@ -235,7 +239,50 @@ namespace SlapChat.ViewModel
             {
                 CurrentUser = Contacts.First();
             }
+
+            // await Authenticate();
         }
+
+
+        private LiveConnectSession session;
+        private async System.Threading.Tasks.Task Authenticate()
+        {
+            var liveIdClient = new LiveAuthClient(MobileServiceConfig.ApplicationUri);
+
+            while (session == null)
+            {
+
+                LiveLoginResult result = await liveIdClient.LoginAsync(new[] { "wl.basic" });
+                if (result.Status == LiveConnectSessionStatus.Connected)
+                {
+                    session = result.Session;
+                    MobileServiceUser user = await authenticationService.LoginAsync(result.Session.AuthenticationToken);
+                    
+                    var client = new LiveConnectClient(session);
+                    LiveOperationResult meResult = await client.GetAsync("me");
+
+                    CurrentUser = new User();
+                    CurrentUser.UserId = user.UserId;                    
+                    CurrentUser.Name = meResult.Result["first_name"].ToString();            
+                }
+                else
+                {
+                    session = null;
+                    // TODO Login required
+                }
+            }
+
+        }
+
+        /*
+        private async System.Threading.Tasks.Task Authenticate()
+        {
+            MobileServiceUser user = await authenticationService.LoginEasyAsync();
+            CurrentUser = new User();
+            CurrentUser.UserId = user.UserId;
+            CurrentUser.Name = "Dummy";
+        }
+         */ 
 
         async void FriendsViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
