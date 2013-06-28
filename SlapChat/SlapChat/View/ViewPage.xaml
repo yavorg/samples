@@ -43,7 +43,8 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Image Grid.Row="0" Grid.Column="0" Source="{Binding Converter={StaticResource viewViewModelToBitmapImageConverter}}"/>
+        <Image Grid.Row="0" Grid.Column="0" 
+               Source="{Binding Uri, Converter={StaticResource viewViewModelToBitmapImageConverter}}"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

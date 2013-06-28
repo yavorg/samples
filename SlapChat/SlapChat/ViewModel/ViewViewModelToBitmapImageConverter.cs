@@ -16,7 +16,7 @@ namespace SlapChat.ViewModel
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             BitmapImage result = null;
-            ViewViewModel vm = value as ViewViewModel;
+            ViewViewModel vm = ServiceLocator.Current.GetInstance<ViewViewModel>();
             if (vm.Stream != null)
             {
                 result = new BitmapImage();
