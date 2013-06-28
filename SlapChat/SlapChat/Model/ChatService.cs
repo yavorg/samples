@@ -205,7 +205,7 @@ namespace SlapChat.Model
             return Task.FromResult<HttpResponseMessage>(new HttpResponseMessage());
         }
 
-        public Stream ReadPhoto(Uri location)
+        public Stream ReadPhotoAsStream(Uri location)
         {
             Stream result = null;
             if (location != null)
@@ -229,6 +229,12 @@ namespace SlapChat.Model
                 }
             }
             return result;
+        }
+
+        public Uri ReadPhotoAsUri(Uri location)
+        {
+            // This method is not supported 
+            return null;
         }
     }
 }

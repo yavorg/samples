@@ -41,16 +41,40 @@ namespace SlapChat.ViewModel
                 var content = contentList.FirstOrDefault();
                 if (content != null)
                 {
-                    Uri = content.Uri;
+                    Uri = chatService.ReadPhotoAsUri(content.Uri);
+                    Stream = chatService.ReadPhotoAsStream(content.Uri);
                 }
                 else
                 {
                     Uri = null;
+                    Stream = null;
                 }
 
             });
             
          
+        }
+
+        public const string StreamPropertyName = "Stream";
+        private Stream stream;
+
+        public Stream Stream
+        {
+            get
+            {
+                return stream;
+            }
+
+            private set
+            {
+                if (stream == value)
+                {
+                    return;
+                }
+
+                stream = value;
+                RaisePropertyChanged(StreamPropertyName);
+            }
         }
 
         public const string UriPropertyName = "Uri";

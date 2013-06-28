@@ -93,18 +93,15 @@ namespace SlapChat.Model
             }
         }
 
-        public Stream ReadPhoto(Uri location)
+        public Stream ReadPhotoAsStream(Uri location)
         {
-            Stream result = null;
-            Debug.WriteLine(location);
-            if (location != null)
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    result = client.GetStreamAsync(location).Result;
-                }
-            }
-            return result;
+            // This method is not supported 
+            return null;
+        }
+
+        public Uri ReadPhotoAsUri(Uri location)
+        {
+            return location;
         }
     }
 }

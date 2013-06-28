@@ -11,18 +11,20 @@ using System.Windows.Media.Imaging;
 
 namespace SlapChat.ViewModel
 {
-    public class UriToBitmapImageConverter : IValueConverter
+    public class ViewViewModelToBitmapImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             BitmapImage result = null;
-            IChatService chatService = ServiceLocator.Current.GetInstance<IChatService>();
-            Stream source = chatService.ReadPhoto(value as Uri);
-
-            if (source != null)
+            ViewViewModel vm = value as ViewViewModel;
+            if (vm.Stream != null)
             {
                 result = new BitmapImage();
-                result.SetSource(source);
+                result.SetSource(vm.Stream);
+            }
+            else
+            {
+                result = new BitmapImage(vm.Uri);
             }
 
             return result;

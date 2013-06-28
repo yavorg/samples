@@ -24,6 +24,9 @@ namespace SlapChat.Model
         void DeletePhotoContent(string id);
 
         Task<HttpResponseMessage> UploadPhotoAsync(Uri location, string secret, Stream photo);
-        Stream ReadPhoto(Uri location);
+        Stream ReadPhotoAsStream(Uri location);
+        Uri ReadPhotoAsUri(Uri location);
+
+
     }
 }
