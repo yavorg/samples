@@ -29,7 +29,7 @@ namespace SlapChat.ViewModel
             contacts.SearchCompleted += contacts_SearchCompleted;
             contacts.SearchAsync(String.Empty, FilterKind.None, null);
 
-            InviteContacts = new RelayCommand(() =>
+            InviteContacts = new RelayCommand(async () =>
             {
                 if (CurrentUser != null)
                 {
@@ -40,7 +40,7 @@ namespace SlapChat.ViewModel
                     }
                     emailAddresses.Remove(emailAddresses.Length - 1, 1);
 
-                    chatService.CreateFriendsAsync(CurrentUser.UserId, 
+                    await chatService.CreateFriendsAsync(CurrentUser.UserId, 
                         emailAddresses.ToString());
 
                     ReadFriends();

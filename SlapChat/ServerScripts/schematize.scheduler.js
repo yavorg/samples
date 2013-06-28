@@ -6,12 +6,11 @@ function schematize() {
         photoContentsTable = tables.getTable('photoContents'),
         photoRecordsTable = tables.getTable('photoRecords');
 
-    usersTable.insert(
-    	{
-    	    name: 'Delete me',
-    	    userId: 'Delete me',
-    	    mpnsChannel: 'Delete me'
-    	});
+    usersTable.insert({
+    	name: 'Delete me',
+    	userId: 'Delete me',
+    	mpnsChannel: 'Delete me'
+    });
 
     friendsTable.insert({
         userId: 'Delete me',

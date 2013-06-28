@@ -65,10 +65,10 @@ function prepareUpload(callback) {
     var azure = require('azure');
     var qs = require('querystring');
 
-    var accountName = 'slapchat';
+    var accountName = '';
     var containerName = 'photos';
     var itemName = fakeGuid();
-    var accountKey = '3jRHHcj/3IxqFFlAdGICpKreiXMpVu5nO1lAqhWySUSKp593IIuSQGNXl5rCL8j2Hm+9bKEvO7msMYYb0iu6dw==';
+    var accountKey = '';
     var host = accountName + '.blob.core.windows.net';
 
     var blobService = azure.createBlobService(accountName, accountKey, host);
