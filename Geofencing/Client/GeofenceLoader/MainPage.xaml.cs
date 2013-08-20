@@ -1,0 +1,158 @@
+﻿using Bing.Maps;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Devices.Geolocation;
+using Windows.Devices.Geolocation.Geofencing;
+using Windows.Foundation;
+using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
+using Windows.Devices;
+using Windows.UI.Core;
+
+// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+
+namespace GeofenceLoader
+{
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class MainPage : Page
+    {
+        private Pushpin currentLocationPushpin;
+        private GeofenceLoader loader;
+        private GeofenceMonitor monitor;
+        private Geolocator locator;
+
+        public MainPage()
+        {
+            this.InitializeComponent();
+            this.monitor = GeofenceMonitor.Current;
+
+            currentLocationPushpin = new Pushpin();
+            currentLocationPushpin.Background = new SolidColorBrush(Colors.Black);
+          
+            myMap.Children.Add(currentLocationPushpin);
+            
+            loader = new GeofenceLoader(new Uri("http://localhost:1337"));
+            loader.PropertyChanged += loader_PropertyChanged;
+
+            monitor = GeofenceMonitor.Current;
+
+            locator = new Geolocator();
+            locator.MovementThreshold = 10;
+            locator.PositionChanged += locator_PositionChanged;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            loader.Start();
+        }
+
+        async void locator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
+        {
+            Geoposition pos = await locator.GetGeopositionAsync();
+
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Location start = pos.ToLocation();
+                MapLayer.SetPosition(currentLocationPushpin, start);
+                myMap.SetView(start, 15);
+             });
+        }
+
+        async void loader_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (String.Equals(e.PropertyName, "ArmedFences") || String.Equals(e.PropertyName, "TriggerFence"))
+            {
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    List<Geofence> result = loader.ArmedFences;
+
+                    // Add application fences
+                    MapShapeLayer fences = new MapShapeLayer();
+                    MapLayer pushpins = new MapLayer();
+                    foreach (Geofence f in result)
+                    {
+                        Geocircle c1 = f.Geoshape as Geocircle;
+                        MapPolyline fence = new MapPolyline();
+                        fence.Color = Colors.Red;
+                        fence.Width = 5;
+                        fence.Locations = DrawMapsCircle(c1.Center, c1.Radius);
+                        fences.Shapes.Add(fence);
+
+                        Pushpin p = new Pushpin();
+                        p.Background = new SolidColorBrush(Colors.Red);
+                        ToolTipService.SetToolTip(p, f.Id);
+                        MapLayer.SetPosition(p, new Location(c1.Center.Latitude, c1.Center.Longitude));
+                        pushpins.Children.Add(p);
+                    }
+
+                    // Add trigger fence
+                    Geocircle c2 = loader.TriggerFence.Geoshape as Geocircle;
+                    MapPolyline trigger = new MapPolyline();
+                    trigger.Color = Colors.Gray;
+                    trigger.Width = 5;
+                    trigger.Locations = DrawMapsCircle(c2.Center, c2.Radius);
+                    fences.Shapes.Add(trigger);
+
+                    myMap.ShapeLayers.Clear();
+                    myMap.ShapeLayers.Add(fences);
+
+                    // Clear existing pushpins
+                    var existingLayers = myMap.Children.Where(c => c is MapLayer).ToArray();
+                    for (int i = 0; i < existingLayers.Count(); i++)
+                    {
+                        myMap.Children.Remove(existingLayers[i]);
+                    }
+                    myMap.Children.Add(pushpins);
+                });
+            }
+        }
+
+        private static double ToDegrees(double radians)
+        {
+            return radians * (180 / Math.PI);
+        }
+
+        private static double ToRadian(double degrees) 
+        { 
+            return degrees * (Math.PI / 180); 
+        }
+
+        public static LocationCollection DrawMapsCircle(BasicGeoposition location, double radius)
+        {
+            LocationCollection destination = new LocationCollection();
+            double earthRadiusInMeters = 6367.0 * 1000.0;
+            var lat = ToRadian(location.Latitude);
+            var lng = ToRadian(location.Longitude);
+            var d = radius / earthRadiusInMeters;
+
+
+            for (var x = 0; x <= 360; x++)
+            {
+                var brng = ToRadian(x);
+                var latRadians = Math.Asin(Math.Sin(lat) * Math.Cos(d) + Math.Cos(lat) * Math.Sin(d) * Math.Cos(brng));
+                var lngRadians = lng + Math.Atan2(Math.Sin(brng) * Math.Sin(d) * Math.Cos(lat), Math.Cos(d) - Math.Sin(lat) * Math.Sin(latRadians));
+
+                destination.Add(new Location()
+                {
+                    Latitude = ToDegrees(latRadians),
+                    Longitude = ToDegrees(lngRadians)
+                });
+            }
+
+            return destination;
+        }
+
+    }
+}
