@@ -1,3 +1,4 @@
+*.exe
 lib
 bin
 obj
