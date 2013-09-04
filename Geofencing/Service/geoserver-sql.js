@@ -9,13 +9,13 @@ http.createServer(function (req, res) {
     var lon = Number(query.lon);
  
     if(lat && lon && !isNaN(lat) && !isNaN(lon)){
-        var sqlQuery = "DECLARE @deviceLocation geography = geography::Point(?, ?, 4326);" +
-        "SELECT top (10) [fenceId], [lat], [long] from GeoFences" +
-        "WHERE @deviceLocation.STDistance(fence) < 5000" +
+        var sqlQuery = "DECLARE @deviceLocation geography = geography::Point(?, ?, 4326); " +
+        "SELECT top (10) [fenceId], [lat], [long] from GeoFences " +
+        "WHERE @deviceLocation.STDistance(fence) < 5000 " +
         "ORDER BY @deviceLocation.STDistance(fence)";
 
         sql.query(conn_str, sqlQuery, [lat, lon], function (err, results) {
-            if (err || !result || !result.length) {
+            if (err || !results || !results.length) {
                 if(err){
                     console.log(err);
                 }

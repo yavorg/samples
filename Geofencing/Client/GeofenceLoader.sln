@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows
+# Visual Studio 2013
 VisualStudioVersion = 12.0.20623.1 VSUPREVIEW
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeofenceLoader", "GeofenceLoader\GeofenceLoader.csproj", "{964763E2-6080-4701-A20A-4294BAB12AA3}"
@@ -9,6 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{160337
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{D8347EE4-4E4A-4DC4-B745-042BE8DA0D79}"
+	ProjectSection(SolutionItems) = preProject
+		..\Service\geopartition.js = ..\Service\geopartition.js
+		..\Service\geoserver-sql.js = ..\Service\geoserver-sql.js
+		..\Service\geoserver.js = ..\Service\geoserver.js
 	EndProjectSection
 EndProject
 Global
