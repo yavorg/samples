@@ -11,14 +11,17 @@ using Newtonsoft.Json.Linq;
 using Windows.Devices;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.WindowsAzure.Messaging;
 
 namespace GeofenceLoader
 {
     class GeofenceLoader : INotifyPropertyChanged
     {
         private HttpClient client;
-        private Dictionary<string, Geofence> cache;
         private GeofenceMonitor monitor;
+        private NotificationHub hub;
+        private string pushChannel;
+        private List<string> tags;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -33,7 +36,13 @@ namespace GeofenceLoader
             this.monitor.GeofenceStateChanged += OnGeofenceStateChangedHandler;       
             this.TriggerFence = null;
             this.ArmedFences = new List<Geofence>();
+            this.tags = new List<string>();
+        }
 
+        public GeofenceLoader(Uri serviceAddress, string hubName, string hubConnectionString, string pushChannel) : this(serviceAddress)
+        {
+            this.hub = new NotificationHub(hubName, hubConnectionString);
+            this.pushChannel = pushChannel;      
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -109,13 +118,16 @@ namespace GeofenceLoader
                 result.Add(new Geofence(
                     name,
                     new Geocircle(
-                        new BasicGeoposition {
+                        new BasicGeoposition
+                        {
                             Altitude = 0,
                             Latitude = o["lat"].ToObject<double>(),
                             Longitude = o["lon"].ToObject<double>()
                         },
-                        100)
-                    ));
+                        100),
+                    MonitoredGeofenceStates.Exited|MonitoredGeofenceStates.Entered,
+                    false,
+                    TimeSpan.FromSeconds(1)));
             }
 
             // Arm them in the geofence monitor
@@ -136,7 +148,18 @@ namespace GeofenceLoader
             
         }
 
-        public void OnGeofenceStateChangedHandler(GeofenceMonitor sender, object e)
+        private Registration GenerateRegistration()
+        {
+            string[] sanitizedTags = tags.ToArray();
+            for (int i=0; i< sanitizedTags.Length; i++)
+            {
+                sanitizedTags[i] = sanitizedTags[i].Replace(" ", "_");
+            }
+
+            return new Registration(this.pushChannel, sanitizedTags);
+        }
+
+        public async void OnGeofenceStateChangedHandler(GeofenceMonitor sender, object e)
         {
             var reports = sender.ReadReports();
 
@@ -149,9 +172,19 @@ namespace GeofenceLoader
                 
                 if (state == GeofenceState.Removed)
                 {
+                   
+                    
                 }
                 else if (state == GeofenceState.Entered)
                 {
+                    if (hub != null)
+                    {
+                        if (!tags.Contains(geofence.Id))
+                        { 
+                            tags.Add(geofence.Id);
+                            await hub.RegisterAsync(GenerateRegistration());
+                        }
+                    }
                 }
                 else if (state == GeofenceState.Exited)
                 {
@@ -161,8 +194,13 @@ namespace GeofenceLoader
                         BasicGeoposition current = sender.LastKnownGeoposition.ToBasicGeoposition();
                         RefreshTriggerFence(current);
                         RefreshArmedFences(current);
-
+                    } else if (hub != null)
+                    {
+                        tags.RemoveAll( x=> String.Equals(x, geofence.Id));
+                        await hub.RegisterAsync(GenerateRegistration());
                     }
+
+
                 }
             }
         }

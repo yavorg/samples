@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.Devices;
 using Windows.UI.Core;
+using Windows.Networking.PushNotifications;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -42,9 +43,6 @@ namespace GeofenceLoader
             currentLocationPushpin.Background = new SolidColorBrush(Colors.Black);
           
             myMap.Children.Add(currentLocationPushpin);
-            
-            loader = new GeofenceLoader(new Uri("http://localhost:1337"));
-            loader.PropertyChanged += loader_PropertyChanged;
 
             monitor = GeofenceMonitor.Current;
 
@@ -53,18 +51,31 @@ namespace GeofenceLoader
             locator.PositionChanged += locator_PositionChanged;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        async protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            // Apparently first call needs to happen on UI thread
+            await locator.GetGeopositionAsync();
+            
+            if (loader == null)
+            {
+                // Fake channel because otherwise it won't work in simulator
+                var channel = "https://bn1.notify.windows.com/?token=AgYAAADCM0ruyKKQnGeNHSWDfdqWh9aphe244WGh0%";
+                loader = new GeofenceLoader(
+                    new Uri("http://localhost:1337"),
+                    MobileSecrets.NotificationHubName,
+                    MobileSecrets.NotificationHubConnectionString,
+                    channel);
+                loader.PropertyChanged += loader_PropertyChanged;
+            }
+
             loader.Start();
         }
 
         async void locator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
         {
-            Geoposition pos = await locator.GetGeopositionAsync();
-
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Location start = pos.ToLocation();
+                Location start = args.Position.ToLocation();
                 MapLayer.SetPosition(currentLocationPushpin, start);
                 myMap.SetView(start, 15);
              });
