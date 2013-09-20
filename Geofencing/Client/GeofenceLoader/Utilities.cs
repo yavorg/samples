@@ -1,5 +1,4 @@
-﻿using Bing.Maps;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +19,6 @@ namespace Windows.Devices
             };
         }
 
-        public static Location ToLocation(this Geoposition g)
-        {
-            return new Location(g.Coordinate.Latitude, g.Coordinate.Longitude);
-        }
+        
     }
 }

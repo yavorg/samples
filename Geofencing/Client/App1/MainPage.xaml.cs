@@ -9,6 +9,7 @@ using Windows.Devices.Geolocation.Geofencing;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -16,13 +17,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.Devices;
-using Windows.UI.Core;
-using Windows.Networking.PushNotifications;
+using WindowsAzure;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace GeofenceLoader
+namespace App1
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -31,41 +30,44 @@ namespace GeofenceLoader
     {
         private Pushpin currentLocationPushpin;
         private GeofenceLoader loader;
-        private GeofenceMonitor monitor;
+        private GeofenceRegistrationManager registrationManager;
         private Geolocator locator;
 
         public MainPage()
         {
             this.InitializeComponent();
-            this.monitor = GeofenceMonitor.Current;
 
             currentLocationPushpin = new Pushpin();
             currentLocationPushpin.Background = new SolidColorBrush(Colors.Black);
-          
-            myMap.Children.Add(currentLocationPushpin);
 
-            monitor = GeofenceMonitor.Current;
+            myMap.Children.Add(currentLocationPushpin);
 
             locator = new Geolocator();
             locator.MovementThreshold = 10;
             locator.PositionChanged += locator_PositionChanged;
+
+            // Set up geofence loader
+            this.loader = new GeofenceLoader(new Uri("http://localhost:1337"));
+            loader.PropertyChanged += loader_PropertyChanged;
+
+            // Set up geofence NH registration manager
+            // Fake channel because otherwise it won't work in simulator
+            var channel = "https://bn1.notify.windows.com/?token=AgYAAADCM0ruyKKQnGeNHSWDfdqWh9aphe244WGh0%";
+            this.registrationManager = new GeofenceRegistrationManager(
+                MobileSecrets.NotificationHubName,
+                MobileSecrets.NotificationHubConnectionString,
+                channel);
+
         }
 
         async protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             // Apparently first call needs to happen on UI thread
             await locator.GetGeopositionAsync();
-            
+
             if (loader == null)
             {
-                // Fake channel because otherwise it won't work in simulator
-                var channel = "https://bn1.notify.windows.com/?token=AgYAAADCM0ruyKKQnGeNHSWDfdqWh9aphe244WGh0%";
-                loader = new GeofenceLoader(
-                    new Uri("http://localhost:1337"),
-                    MobileSecrets.NotificationHubName,
-                    MobileSecrets.NotificationHubConnectionString,
-                    channel);
-                loader.PropertyChanged += loader_PropertyChanged;
+
             }
 
             loader.Start();
@@ -78,7 +80,7 @@ namespace GeofenceLoader
                 Location start = args.Position.ToLocation();
                 MapLayer.SetPosition(currentLocationPushpin, start);
                 myMap.SetView(start, 15);
-             });
+            });
         }
 
         async void loader_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -130,14 +132,16 @@ namespace GeofenceLoader
             }
         }
 
+      
+
         private static double ToDegrees(double radians)
         {
             return radians * (180 / Math.PI);
         }
 
-        private static double ToRadian(double degrees) 
-        { 
-            return degrees * (Math.PI / 180); 
+        private static double ToRadian(double degrees)
+        {
+            return degrees * (Math.PI / 180);
         }
 
         public static LocationCollection DrawMapsCircle(BasicGeoposition location, double radius)

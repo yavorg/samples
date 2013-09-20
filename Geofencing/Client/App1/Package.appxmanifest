@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="241444e0-d1fb-4566-b5d1-896d72bc6d09" Publisher="CN=yavorg" Version="1.0.0.0" />
+  <Identity Name="c8e25193-7ed1-4cb4-a775-25d0e03c668b" Publisher="CN=yavorg" Version="1.0.0.0" />
   <Properties>
-    <DisplayName>GeofenceLoader</DisplayName>
+    <DisplayName>App1</DisplayName>
     <PublisherDisplayName>yavorg</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -14,8 +14,8 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="GeofenceLoader.App">
-      <m2:VisualElements DisplayName="GeofenceLoader" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="GeofenceLoader" ForegroundText="light" BackgroundColor="#464646" ToastCapable="true">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="App1.App">
+      <m2:VisualElements DisplayName="App1" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="App1" ForegroundText="light" BackgroundColor="#464646">
         <m2:SplashScreen Image="Assets\SplashScreen.png" />
       </m2:VisualElements>
     </Application>
