@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.20623.1 VSUPREVIEW
+VisualStudioVersion = 12.0.20827.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeofenceLoader", "GeofenceLoader\GeofenceLoader.csproj", "{964763E2-6080-4701-A20A-4294BAB12AA3}"
 EndProject
@@ -11,11 +11,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{160337
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{D8347EE4-4E4A-4DC4-B745-042BE8DA0D79}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{D4F5F746-1B09-4112-AE5A-7889B02F3903}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Node SQL", "Node SQL", "{CDB1F625-3C52-4F4C-A227-B75B0ABD6DD5}"
 	ProjectSection(SolutionItems) = preProject
-		..\Service\geopartition.js = ..\Service\geopartition.js
-		..\Service\geoserver-sql.js = ..\Service\geoserver-sql.js
-		..\Service\geoserver.js = ..\Service\geoserver.js
+		..\Service\Node SQL\Geopartition.cs = ..\Service\Node SQL\Geopartition.cs
+		..\Service\Node SQL\geoserver-sql.js = ..\Service\Node SQL\geoserver-sql.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Node Static Files", "Node Static Files", "{CF26B282-32D5-4238-B7B0-B6027F3C6411}"
+	ProjectSection(SolutionItems) = preProject
+		..\Service\Node Static Files\geopartition.js = ..\Service\Node Static Files\geopartition.js
+		..\Service\Node Static Files\geoserver.js = ..\Service\Node Static Files\geoserver.js
 	EndProjectSection
 EndProject
 Global
@@ -57,5 +64,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDB1F625-3C52-4F4C-A227-B75B0ABD6DD5} = {D4F5F746-1B09-4112-AE5A-7889B02F3903}
+		{CF26B282-32D5-4238-B7B0-B6027F3C6411} = {D4F5F746-1B09-4112-AE5A-7889B02F3903}
 	EndGlobalSection
 EndGlobal
