@@ -39,34 +39,42 @@ namespace WindowsAzure
 
         public async void OnGeofenceStateChangedHandler(GeofenceMonitor sender, object e)
         {
+            bool tagsChanged = false;
             var reports = sender.ReadReports();
 
-            foreach (GeofenceStateChangeReport report in reports)
-            {
-                GeofenceState state = report.NewState;
-
-                Geofence geofence = report.Geofence;
-
-                if (!String.Equals(geofence.Id, triggerFenceName))
+          
+                foreach (GeofenceStateChangeReport report in reports)
                 {
+                    GeofenceState state = report.NewState;
 
-                    if (state == GeofenceState.Removed)
+                    Geofence geofence = report.Geofence;
+
+                    if (!String.Equals(geofence.Id, triggerFenceName))
                     {
 
+                        if (state == GeofenceState.Removed)
+                        {
 
-                    }
-                    else if (state == GeofenceState.Entered)
-                    {
-                        tags.Add(geofence.Id);
-                        await hub.RegisterAsync(GenerateRegistration());
-                    }
-                    else if (state == GeofenceState.Exited)
-                    {
-                        tags.RemoveAll(x => String.Equals(x, geofence.Id));
-                        await hub.RegisterAsync(GenerateRegistration());
+
+                        }
+                        else if (state == GeofenceState.Entered)
+                        {
+                            tags.Add(geofence.Id);
+                            tagsChanged = true;
+                        }
+                        else if (state == GeofenceState.Exited)
+                        {
+                            tags.RemoveAll(x => String.Equals(x, geofence.Id));
+                            tagsChanged = true;
+                        }
                     }
                 }
-            }
+
+                if (tagsChanged)
+                {
+                    await hub.RegisterAsync(GenerateRegistration());
+                }
+            
         }
     }
 }

@@ -64,12 +64,6 @@ namespace App1
         {
             // Apparently first call needs to happen on UI thread
             await locator.GetGeopositionAsync();
-
-            if (loader == null)
-            {
-
-            }
-
             loader.Start();
         }
 
