@@ -11,7 +11,7 @@ namespace Windows.Devices.Geolocation
     {
         public static Location ToLocation(this Geoposition g)
         {
-            return new Location(g.Coordinate.Latitude, g.Coordinate.Longitude);
+            return new Location(g.Coordinate.Point.Position.Latitude, g.Coordinate.Point.Position.Longitude);
         }
       
     }

@@ -11,14 +11,7 @@ namespace Windows.Devices
     {
         public static BasicGeoposition ToBasicGeoposition(this Geoposition g)
         {
-            return new BasicGeoposition
-            {
-                Altitude = g.Coordinate.Altitude ?? 0,
-                Latitude = g.Coordinate.Latitude,
-                Longitude = g.Coordinate.Longitude                
-            };
+            return g.Coordinate.Point.Position;
         }
-
-        
     }
 }
