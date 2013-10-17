@@ -108,7 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAzure.Messaging.Managed">
-      <HintPath>..\packages\WindowsAzure.Messaging.Managed.0.1.7.1\lib\netcore45\Microsoft.WindowsAzure.Messaging.Managed.dll</HintPath>
+      <HintPath>..\packages\WindowsAzure.Messaging.Managed.0.1.7.2\lib\netcore45\Microsoft.WindowsAzure.Messaging.Managed.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -47,10 +47,11 @@ namespace App1
             locator.PositionChanged += locator_PositionChanged;
 
             // Set up geofence loader
-            /*
-            this.loader = new GeofenceLoader(new Uri("http://localhost:1337"));
-            loader.PropertyChanged += loader_PropertyChanged;
-             */
+            this.loader = new GeofenceLoader(
+                new Uri(MobileSecrets.MobileServiceUrl),
+                MobileSecrets.MobileServiceKey
+                );
+            loader.PropertyChanged += loader_PropertyChanged;        
 
             // Set up geofence NH registration manager
             // Fake channel because otherwise it won't work in simulator
@@ -68,7 +69,7 @@ namespace App1
         {
             // Apparently first call needs to happen on UI thread
             await locator.GetGeopositionAsync();
-            //loader.Start();
+            loader.Start();
         }
 
         async void locator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)

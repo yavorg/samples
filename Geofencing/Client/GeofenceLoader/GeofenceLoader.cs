@@ -11,23 +11,23 @@ using Newtonsoft.Json.Linq;
 using Windows.Devices;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace WindowsAzure
 {
     public class GeofenceLoader : INotifyPropertyChanged
     {
-        private HttpClient client;
+        private MobileServiceClient client;
         private GeofenceMonitor monitor;
+        private IMobileServiceTable<ServerGeofence> table;
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public GeofenceLoader(Uri serviceAddress)
+        public GeofenceLoader(Uri applicationUri, string key)
         {
-            this.client = new HttpClient
-            {
-                BaseAddress = serviceAddress
-                
-            };
+            this.client = new MobileServiceClient(applicationUri, key);
+            this.table = client.GetTable<ServerGeofence>();
             this.monitor = GeofenceMonitor.Current;
             this.monitor.GeofenceStateChanged += OnGeofenceStateChangedHandler;       
             this.TriggerFence = null;
@@ -88,37 +88,39 @@ namespace WindowsAzure
             RefreshArmedFences(here);
         }
 
+        
         public async void RefreshArmedFences(BasicGeoposition location)
         {
             // Obtain the list of fences
-            List<Geofence> result = new List<Geofence>();
-            string query = String.Format("/?lat={0}&lon={1}", location.Latitude, location.Longitude);
-            var response = await client.GetAsync(new Uri(query, UriKind.Relative));
-            response.EnsureSuccessStatusCode();
-            JArray results = JArray.Parse(await response.Content.ReadAsStringAsync());
-            foreach (JObject o in results)
-            {
-                string name = o["name"].ToString();
+            string partition = Math.Floor(location.Latitude * 100).ToString() + 
+                Math.Floor(location.Longitude * 100).ToString();
+
+            var response = await table.Where(f => f.Partition == partition).
+                ToListAsync();
+
+            List<Geofence> result = response.Select<ServerGeofence, Geofence>(f => {
+                string name = f.FenceId;
                 if(name.Length > 63){
                     name = name.Substring(0, 60) + "...";
                 } else if (name.Length == 0){
                     name = "Unknown";
                 }
 
-                result.Add(new Geofence(
+                return new Geofence(
                     name,
                     new Geocircle(
                         new BasicGeoposition
                         {
                             Altitude = 0,
-                            Latitude = o["lat"].ToObject<double>(),
-                            Longitude = o["lon"].ToObject<double>()
+                            Latitude = f.Lat,
+                            Longitude = f.Lon
                         },
                         100),
                     MonitoredGeofenceStates.Exited|MonitoredGeofenceStates.Entered,
                     false,
-                    TimeSpan.FromSeconds(1)));
-            }
+                    TimeSpan.FromSeconds(1));
+            }).ToList<Geofence>();
+               
 
             // Arm them in the geofence monitor
             monitor.Geofences.Clear();

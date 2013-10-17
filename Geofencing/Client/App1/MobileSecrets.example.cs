@@ -10,5 +10,7 @@ namespace App1
     {
         public static string NotificationHubName = "";
         public static string NotificationHubConnectionString = "";
+        public static string MobileServiceUrl = "";
+        public static string MobileServiceKey = "";
     }
 }
