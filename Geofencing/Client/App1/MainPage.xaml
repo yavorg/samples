@@ -6,35 +6,66 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:bm="using:Bing.Maps"
-    mc:Ignorable="d">
+    mc:Ignorable="d" >
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="Beige"  >
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <bm:Map Grid.Column="0" Grid.Row="0"
-            Credentials="Ap9dT3ZcytFiE13PQlv6eTDWrHbFjP8Ex2eyUlTTXLsk9NA5aea7alk5ffd5MSMp" x:Name="myMap"></bm:Map>
-        <Grid Grid.Column="0" Grid.Row="1">
+
+        <Grid Visibility="Collapsed" Grid.Row="0" Grid.Column="0" x:Name="mapView">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />     
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="2*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Ellipse Grid.Row="0" Grid.Column="0" Fill="Black" Width="30" Height="30" Stroke="White" StrokeThickness="3"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" FontSize="25" VerticalAlignment="Center">Current position</TextBlock>
-            <Ellipse Grid.Row="1" Grid.Column="0" Width="50" Height="50" Stroke="Red" StrokeThickness="5" />
-            <TextBlock Grid.Row="1" Grid.Column="1" FontSize="25" VerticalAlignment="Center">Armed geofence</TextBlock>
-            <Ellipse Grid.Row="2" Grid.Column="0" Width="50" Height="50" Stroke="Gray" StrokeThickness="5" />
-            <TextBlock Grid.Row="2" Grid.Column="1" FontSize="25" VerticalAlignment="Center">Load trigger geofence</TextBlock>
+            <bm:Map Grid.Column="0" Grid.Row="0" 
+            Credentials="Ap9dT3ZcytFiE13PQlv6eTDWrHbFjP8Ex2eyUlTTXLsk9NA5aea7alk5ffd5MSMp" x:Name="myMap"></bm:Map>
+            <Grid Grid.Column="0" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Ellipse Grid.Row="0" Grid.Column="0" Fill="Black" Width="30" Height="30" Stroke="White" StrokeThickness="3"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" FontSize="25" VerticalAlignment="Center">Current position</TextBlock>
+                <Ellipse Grid.Row="1" Grid.Column="0" Width="50" Height="50" Stroke="Red" StrokeThickness="5" />
+                <TextBlock Grid.Row="1" Grid.Column="1" FontSize="25" VerticalAlignment="Center">Armed geofence</TextBlock>
+                <Ellipse Grid.Row="2" Grid.Column="0" Width="50" Height="50" Stroke="Gray" StrokeThickness="5" />
+                <TextBlock Grid.Row="2" Grid.Column="1" FontSize="25" VerticalAlignment="Center">Load trigger geofence</TextBlock>
+                <Button Content="Happy place" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        Click="Button_Click2"/>
+            </Grid>
         </Grid>
 
-    </Grid>
+        <Grid Grid.Column="0" Grid.Row="0" x:Name="homeView">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+            <Image Source="Assets/starbucks-logo.png" Grid.Row="0" Grid.Column="0"/>
+            <TextBlock Text="Starbucks loyalty" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" FontFamily="Segoe UI" 
+                       FontSize="100" VerticalAlignment="Center" />
+            <Button Grid.Row="2" Grid.Column="2" Content="Gory details" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Click="Button_Click" />
+        </Grid>
+
+        </Grid>
+   
 </Page>

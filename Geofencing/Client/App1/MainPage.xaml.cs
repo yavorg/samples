@@ -47,16 +47,20 @@ namespace App1
             locator.PositionChanged += locator_PositionChanged;
 
             // Set up geofence loader
+            /*
             this.loader = new GeofenceLoader(new Uri("http://localhost:1337"));
             loader.PropertyChanged += loader_PropertyChanged;
+             */
 
             // Set up geofence NH registration manager
             // Fake channel because otherwise it won't work in simulator
+            /*
             var channel = "https://bn1.notify.windows.com/?token=AgYAAADCM0ruyKKQnGeNHSWDfdqWh9aphe244WGh0%";
             this.registrationManager = new GeofenceRegistrationManager(
                 MobileSecrets.NotificationHubName,
                 MobileSecrets.NotificationHubConnectionString,
                 channel);
+             */
 
         }
 
@@ -64,7 +68,7 @@ namespace App1
         {
             // Apparently first call needs to happen on UI thread
             await locator.GetGeopositionAsync();
-            loader.Start();
+            //loader.Start();
         }
 
         async void locator_PositionChanged(Geolocator sender, PositionChangedEventArgs args)
@@ -162,6 +166,20 @@ namespace App1
 
             return destination;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            mapView.Visibility = Visibility.Visible;
+            homeView.Visibility = Visibility.Collapsed;
+        }
+
+        private void Button_Click2(object sender, RoutedEventArgs e)
+        {
+            mapView.Visibility = Visibility.Collapsed;
+            homeView.Visibility = Visibility.Visible;
+        }
+
+
 
     }
 }
