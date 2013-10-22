@@ -50,7 +50,7 @@
 
         <Grid Grid.Column="0" Grid.Row="0" x:Name="homeView">
                 <Grid.RowDefinitions>
-                    <RowDefinition />
+                    <RowDefinition Height="256" />
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
@@ -62,6 +62,10 @@
             <Image Source="Assets/starbucks-logo.png" Grid.Row="0" Grid.Column="0"/>
             <TextBlock Text="Starbucks loyalty" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" FontFamily="Segoe UI" 
                        FontSize="100" VerticalAlignment="Center" />
+            <TextBlock Text="Offer:" Grid.Row="1" Grid.Column="0" FontFamily="Segoe UI" 
+                       FontSize="100" />
+            <HyperlinkButton x:Name="offerUrl" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" FontFamily="Segoe UI" 
+                       FontSize="100" Content="" />
             <Button Grid.Row="2" Grid.Column="2" Content="Gory details" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Click="Button_Click" />
         </Grid>

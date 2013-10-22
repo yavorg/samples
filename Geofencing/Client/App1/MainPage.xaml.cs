@@ -10,6 +10,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -53,17 +54,34 @@ namespace App1
                 );
             loader.PropertyChanged += loader_PropertyChanged;        
 
-            // Set up geofence NH registration manager
-            // Fake channel because otherwise it won't work in simulator
-            /*
-            var channel = "https://bn1.notify.windows.com/?token=AgYAAADCM0ruyKKQnGeNHSWDfdqWh9aphe244WGh0%";
+            // Set up geofence registration manager       
             this.registrationManager = new GeofenceRegistrationManager(
-                MobileSecrets.NotificationHubName,
-                MobileSecrets.NotificationHubConnectionString,
-                channel);
-             */
-
+                new Uri(MobileSecrets.MobileServiceUrl),
+                MobileSecrets.MobileServiceKey);
+            registrationManager.Campaigns.CollectionChanged +=Campaigns_CollectionChanged;
+            
+            loader.Actions.Add(registrationManager);
         }
+
+        async void Campaigns_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Campaign c = registrationManager.Campaigns.FirstOrDefault();
+                if (c != null)
+                {
+                    offerUrl.NavigateUri = c.Url;
+                    offerUrl.Content = "Redeem";
+                }
+                else
+                {
+                    offerUrl.NavigateUri = null;
+                    offerUrl.Content = String.Empty;
+                }
+            });
+        }
+
+     
 
         async protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -179,8 +197,6 @@ namespace App1
             mapView.Visibility = Visibility.Collapsed;
             homeView.Visibility = Visibility.Visible;
         }
-
-
 
     }
 }

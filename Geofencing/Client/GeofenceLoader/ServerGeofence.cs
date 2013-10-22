@@ -13,8 +13,8 @@ namespace WindowsAzure
     {
         public int Id { get; set; }
 
-        [JsonProperty(PropertyName = "fenceId")]
-        public string FenceId { get; set; }
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
 
         [JsonProperty(PropertyName = "lat")]
         public double Lat { get; set; }

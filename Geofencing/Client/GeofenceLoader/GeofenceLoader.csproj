@@ -103,10 +103,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Geofence.cs" />
+    <Compile Include="ServerGeofence.cs" />
     <Compile Include="GeofenceLoader.cs" />
+    <Compile Include="GeofenceLoaderAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Threading.Tasks">
