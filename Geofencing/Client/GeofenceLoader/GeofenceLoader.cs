@@ -1,18 +1,12 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.MobileServices;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using Windows.Devices.Geolocation;
 using Windows.Devices.Geolocation.Geofencing;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using Windows.Devices;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Microsoft.WindowsAzure.MobileServices;
-using System.Diagnostics;
 
 namespace WindowsAzure
 {
@@ -21,7 +15,7 @@ namespace WindowsAzure
         private MobileServiceClient client;
         private GeofenceMonitor monitor;
         private IMobileServiceTable<ServerGeofence> table;
-       
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public GeofenceLoader(Uri applicationUri, string key)
@@ -30,7 +24,8 @@ namespace WindowsAzure
             this.table = client.GetTable<ServerGeofence>();
             this.monitor = GeofenceMonitor.Current;
             this.monitor.Geofences.Clear();
-            this.monitor.GeofenceStateChanged += OnGeofenceStateChangedHandler;       
+            this.monitor.GeofenceStateChanged += OnGeofenceStateChangedHandler;
+            this.monitor.StatusChanged += (sender, args) => Debug.WriteLine(sender.Status.ToString());
             this.TriggerFence = null;
             this.ArmedFences = new List<Geofence>();
             this.Actions = new List<GeofenceLoaderAction>();
@@ -80,7 +75,6 @@ namespace WindowsAzure
             }
         }
 
-        
         private List<Geofence> armedFences;
         public List<Geofence> ArmedFences
         {
@@ -108,23 +102,24 @@ namespace WindowsAzure
             RefreshArmedFences(here);
         }
 
-        
         private async void RefreshArmedFences(BasicGeoposition location)
         {
             // Obtain the list of fences
-            string partition = "lat" + Math.Floor(location.Latitude * 100).ToString() + 
+            string partition = "lat" + Math.Floor(location.Latitude * 100).ToString() +
                 "lon" + Math.Floor(location.Longitude * 100).ToString();
 
             var response = await table.Where(f => f.Partition == partition).
                 ToListAsync();
 
-            List<Geofence> result = response.Select<ServerGeofence, Geofence>(f => {
+            List<Geofence> result = response.Select<ServerGeofence, Geofence>(f =>
+            {
                 string name = f.Name;
-               
-                
-                if(name.Length > 63){
+                if (name.Length > 63)
+                {
                     name = name.Substring(0, 60);
-                } else if (name.Length == 0){
+                }
+                else if (name.Length == 0)
+                {
                     name = "Unknown";
                 }
 
@@ -138,11 +133,11 @@ namespace WindowsAzure
                             Longitude = f.Lon
                         },
                         100),
-                    MonitoredGeofenceStates.Exited|MonitoredGeofenceStates.Entered,
+                    MonitoredGeofenceStates.Exited | MonitoredGeofenceStates.Entered,
                     false,
                     TimeSpan.FromSeconds(1));
             }).ToList<Geofence>();
-               
+
 
             // Arm them in the geofence monitor
             monitor.Geofences.Clear();
@@ -153,13 +148,13 @@ namespace WindowsAzure
                 {
                     monitor.Geofences.Add(f);
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     Debug.WriteLine("Could not add geofence: {0}", e.ToString());
                 }
             }
 
             ArmedFences = result;
-            
         }
 
         private void OnGeofenceStateChangedHandler(GeofenceMonitor sender, object e)
@@ -170,13 +165,9 @@ namespace WindowsAzure
             foreach (GeofenceStateChangeReport report in reports)
             {
                 GeofenceState state = report.NewState;
-
                 Geofence geofence = report.Geofence;
-
-                
                 if (state == GeofenceState.Removed)
                 {
-                  
                 }
                 else if (state == GeofenceState.Entered)
                 {
@@ -190,7 +181,8 @@ namespace WindowsAzure
 
             foreach (KeyValuePair<string, GeofenceState> report in reportsBuffer)
             {
-                switch(report.Value){
+                switch (report.Value)
+                {
                     case GeofenceState.Entered:
                         foreach (GeofenceLoaderAction action in Actions)
                         {
@@ -222,14 +214,15 @@ namespace WindowsAzure
         {
             // The partition size on the server is a rectangle with sides of 0.01 degree, 
             // so draw a circle to the closest edge of the rectangle           
-           
+
             double closestLat = Math.Round(location.Latitude, 2);
             double distanceToClosestLat = Math.Abs(closestLat - location.Latitude);
             double closestLon = Math.Round(location.Longitude, 2);
-            double distanceToClosestLon =  Math.Abs(closestLon - location.Longitude);
+            double distanceToClosestLon = Math.Abs(closestLon - location.Longitude);
 
             BasicGeoposition closestEdge = new BasicGeoposition();
-            if(distanceToClosestLon < distanceToClosestLat){
+            if (distanceToClosestLon < distanceToClosestLat)
+            {
                 closestEdge.Latitude = location.Latitude;
                 closestEdge.Longitude = closestLon;
             }
@@ -256,7 +249,7 @@ namespace WindowsAzure
                             Longitude = location.Longitude
                         },
                         distance
-                    ), 
+                    ),
                     MonitoredGeofenceStates.Exited,
                     false,
                     TimeSpan.FromSeconds(1));
