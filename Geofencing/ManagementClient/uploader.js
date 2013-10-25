@@ -1,0 +1,151 @@
+var maxBlockSize = 256 * 1024;//Each file will be split in 256 KB.
+var numberOfBlocks = 1;
+var selectedFile = null;
+var currentFilePointer = 0;
+var totalBytesRemaining = 0;
+var blockIds = new Array();
+var blockIdPrefix = "block-";
+var sasUrl = null;
+var bytesUploaded = 0;
+
+var client = new WindowsAzure.MobileServiceClient('https://whatsnear.azure-mobile.net/', 'EjdhbaDTswHOgtoicPVnxRRqiVbaPL81');
+var reader = new FileReader();
+
+$(document).ready(function () {
+    $("#output").hide();
+    $('#add-item').submit(function (evt) {
+        client.invokeApi('getbulkuploadsastoken', { method: 'GET' }).done(
+            function (response) {
+                sasUrl = response.responseText;
+                uploadFileInBlocks();
+            },
+            function (error) {
+                var xhr = error.request;
+                alert('Error - status code: ' + xhr.status + '; body: ' + xhr.responseText);
+            }
+        );    
+        evt.preventDefault();
+    });
+    $("#file-to-upload").bind('change', handleFileSelect);
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
+        // Great success! All the File APIs are supported.
+    } else {
+        alert('The File APIs are not fully supported in this browser.');
+    }
+});
+
+//Read the file and find out how many blocks we would need to split it.
+function handleFileSelect(e) {
+    currentFilePointer = 0;
+    totalBytesRemaining = 0;
+    var files = e.target.files;
+    selectedFile = files[0];
+    $("#output").show();
+    $("#fileName").text(selectedFile.name);
+    $("#fileSize").text(selectedFile.size);
+    $("#fileType").text(selectedFile.type);
+    var fileSize = selectedFile.size;
+    if (fileSize < maxBlockSize) {
+        maxBlockSize = fileSize;
+        console.log("max block size = " + maxBlockSize);
+    }
+    totalBytesRemaining = fileSize;
+    if (fileSize % maxBlockSize == 0) {
+        numberOfBlocks = fileSize / maxBlockSize;
+    } else {
+        numberOfBlocks = parseInt(fileSize / maxBlockSize, 10) + 1;
+    }
+    console.log("total blocks = " + numberOfBlocks);
+}
+
+reader.onloadend = function (evt) {
+    if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+        var uri = sasUrl + '&comp=block&blockid=' + blockIds[blockIds.length - 1];
+        var requestData = new Uint8Array(evt.target.result);
+        $.ajax({
+            url: uri,
+            type: "PUT",
+            data: requestData,
+            processData: false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+                xhr.setRequestHeader('Content-Length', requestData.length);
+            },
+            success: function (data, status) {
+                console.log(data);
+                console.log(status);
+                bytesUploaded += requestData.length;
+                var percentComplete = ((parseFloat(bytesUploaded) / parseFloat(selectedFile.size)) * 100).toFixed(2);
+                $("#fileUploadProgress").text(percentComplete + " %");
+                uploadFileInBlocks();
+            },
+            error: function (xhr, desc, err) {
+                console.log(desc);
+                console.log(err);
+            }
+        });
+    }
+};
+
+function uploadFileInBlocks() {
+    if (totalBytesRemaining > 0) {
+        console.log("current file pointer = " + currentFilePointer + " bytes read = " + maxBlockSize);
+        var fileContent = selectedFile.slice(currentFilePointer, currentFilePointer + maxBlockSize);
+        var blockId = blockIdPrefix + pad(blockIds.length, 6);
+        console.log("block id = " + blockId);
+        blockIds.push(btoa(blockId));
+        reader.readAsArrayBuffer(fileContent);
+        currentFilePointer += maxBlockSize;
+        totalBytesRemaining -= maxBlockSize;
+        if (totalBytesRemaining < maxBlockSize) {
+            maxBlockSize = totalBytesRemaining;
+        }
+    } else {
+        commitBlockList();
+    }
+}
+
+function commitBlockList() {
+    var uri = sasUrl + '&comp=blocklist';
+    console.log(uri);
+    var requestBody = '<?xml version="1.0" encoding="utf-8"?><BlockList>';
+    for (var i = 0; i < blockIds.length; i++) {
+        requestBody += '<Latest>' + blockIds[i] + '</Latest>';
+    }
+    requestBody += '</BlockList>';
+    console.log(requestBody);
+    $.ajax({
+        url: uri,
+        type: "PUT",
+        data: requestBody,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('x-ms-blob-content-type', selectedFile.type);
+            xhr.setRequestHeader('Content-Length', requestBody.length);
+//            xhr.setRequestHeader('Content-Type', 'text/plain');
+            xhr.setRequestHeader('x-ms-version', '2012-02-12');
+        },
+        success: function (data, status) {
+            client.invokeApi('processgeofences', { method: 'POST', body: { blobUrl: sasUrl} }).done(
+                function (response) {
+                    alert('Finished uploading!');
+                },
+                function (error) {
+                    var xhr = error.request;
+                    alert('Error - status code: ' + xhr.status + '; body: ' + xhr.responseText);
+                }
+            );                
+        },
+        error: function (xhr, desc, err) {
+            console.log(desc);
+            console.log(err);
+        }
+    });
+}
+
+function pad(number, length) {
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+    return str;
+}

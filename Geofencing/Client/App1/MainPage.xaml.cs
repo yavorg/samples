@@ -37,6 +37,7 @@ namespace App1
         public MainPage()
         {
             this.InitializeComponent();
+            this.myMap.Credentials = MobileSecrets.BingMapCredentials;
 
             currentLocationPushpin = new Pushpin();
             currentLocationPushpin.Background = new SolidColorBrush(Colors.Black);
@@ -52,14 +53,14 @@ namespace App1
                 new Uri(MobileSecrets.MobileServiceUrl),
                 MobileSecrets.MobileServiceKey
                 );
-            loader.PropertyChanged += loader_PropertyChanged;        
+            loader.PropertyChanged += loader_PropertyChanged;
 
             // Set up geofence registration manager       
             this.registrationManager = new GeofenceRegistrationManager(
                 new Uri(MobileSecrets.MobileServiceUrl),
                 MobileSecrets.MobileServiceKey);
-            registrationManager.Campaigns.CollectionChanged +=Campaigns_CollectionChanged;
-            
+            registrationManager.Campaigns.CollectionChanged += Campaigns_CollectionChanged;
+
             loader.Actions.Add(registrationManager);
         }
 
@@ -149,8 +150,6 @@ namespace App1
             }
         }
 
-      
-
         private static double ToDegrees(double radians)
         {
             return radians * (180 / Math.PI);
@@ -186,13 +185,13 @@ namespace App1
             return destination;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void GoryDetailsClick(object sender, RoutedEventArgs e)
         {
             mapView.Visibility = Visibility.Visible;
             homeView.Visibility = Visibility.Collapsed;
         }
 
-        private void Button_Click2(object sender, RoutedEventArgs e)
+        private void HappyPlaceClick(object sender, RoutedEventArgs e)
         {
             mapView.Visibility = Visibility.Collapsed;
             homeView.Visibility = Visibility.Visible;
