@@ -49,10 +49,10 @@ DATA
 
 AUTH
 
-1. Show documentation
-2. Create Facebook app
-3. Copy credentials into portal
-4. Turn on permissions - show error
+1. Turn on auth in the mobile service - previous demo fails
+2. Show documentation
+3. Create Facebook app
+4. Copy credentials into portal
 5. How do we do authenticate
 
 	> auth/index.html
@@ -89,13 +89,16 @@ AUTH
 	   request.execute();
 	}
 
+7. Show table in portal
 
 PUSH
 
-1. Get pusher from the store
-2. Set up source control
+1. Set up source control
+2. Walk through the directory structure
 3. Clone repo
+2. Get pusher from the store
 4. Add server scripts for Pusher
+5. Undo auth changes - scripts and portal
 
 	> shared/pusher.js
 	function generateClient(){
@@ -109,7 +112,7 @@ PUSH
 	}
 
 	exports.triggerRefresh = function() {
-		var pusher = generateClient();
+		var pusher = generateClie 	nt();
 		pusher.trigger('todo', 'refresh', {});
 		
 	};
@@ -145,3 +148,11 @@ PUSH
 	    var pusher = require('../shared/pusher.js');
 		pusher.triggerSendMessage('Head to the slots');
 	}
+
+
+DEMO SETUP
+1. Reset git repo
+2. Create mobile service 
+3. Update secrets.cs with mobile service creds
+4. Ditto for Pusher creds
+5. Go to Facebook, set redirect URL
