@@ -74,13 +74,7 @@ DATA
 	    }
 	});
 
-5. Custom API
-
-Write me
-
-6. Scheduler
-
-Write  me
+5. Custom API - just show in the portal
 
 AUTH
 
@@ -165,18 +159,26 @@ PUSH
 4. Add server scripts for Pusher
 
 	> pusher.js
-	exports.triggerRefresh = function() {
-		var Pusher = require('pusher'),
-		pusher = new Pusher(
+	function generateClient(){
+		var Pusher = require('pusher');
+		return new Pusher(
 		{
 			appId: '{get from portal}',
 			key: '{get from portal}',
 			secret: '{get from portal}'
 		});
+	}
+
+	exports.triggerRefresh = function() {
+		var pusher = generateClient();
 		pusher.trigger('todo', 'refresh', {});
 		
 	};
 
+	exports.triggerSendMessage = function(message){
+		var pusher = generateClient();
+		pusher.trigger('todo', 'sendMessage', message);
+	}
 	> todoitem.insert.js, todoitem.update.js, todoitem.delete.js
     var pusher = require('../shared/pusher.js');
 	pusher.triggerRefresh();
@@ -187,3 +189,19 @@ PUSH
         channel = pusher.subscribe('todo');
 
     channel.bind('refresh', refreshTodoItems);
+
+5. Scheduler
+* Create scheduled job
+* Show logs tab if you haven't
+* Keep pusher console open
+
+	> app.js
+    channel.bind('sendMessage', function(payload){
+        alert('Important message! ' + payload);
+    });
+
+    > scheduler/sendNews.js
+	function sendNews() {
+	    var pusher = require('../shared/pusher.js');
+		pusher.triggerSendMessage('Head to the slots');
+	}

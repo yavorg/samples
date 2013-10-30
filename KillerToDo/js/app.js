@@ -134,5 +134,8 @@
         channel = pusher.subscribe('todo');
 
     channel.bind('refresh', refreshTodoItems);
+    channel.bind('sendMessage', function(payload){
+        alert('Important message! ' + payload);
+    })
 
 });
