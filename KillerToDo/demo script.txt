@@ -11,7 +11,9 @@ DATA
 
 2. Server validation for "work"
 
-	> todoitem.insert.js
+	> start/index.html
+
+	> table/todoitem.insert.js
 	function insert(item, user, request) {
 	    if (item.text.toLowerCase().indexOf('work') > -1) {
 	        request.respond(statusCodes.BAD_REQUEST, {
@@ -24,55 +26,24 @@ DATA
 
 3. Client-side filtering
 
-	<form id='query'>
-	    <input type='text' id='query-filter' placeholder='Starts with' />
-	</form>
+	> filteringPaging/index.html
 
+	> filteringPaging/page.js
 	var filter = $('#query-filter')
 	var query = todoItemTable.where(function(val){
 		return this.complete == false &&
 	    this.text.indexOf(val) == 0;
 	}, filter.val());
 
-	// Handle filtering
-	 $('#query').submit(function(evt) {
-	    var textbox = $('#query-filter'),
-	        itemText = textbox.val();
-	    if (itemText !== '') {
-	        refreshTodoItems();
-	    }
-	    textbox.val('').focus();
-	    evt.preventDefault();
-	});
-
-
 4. Paging
 
-	<div class='section'>
-	    <button id='prev'>Prev</button>
-	    <button id='next'>Next</button>
-	</div>
-
-	var query = query.skip(skip*take).take(take).includeTotalCount();
-
-	$('#summary').html('Showing page <strong>' + (skip + 1) + '</strong> out of ' +
-	'<strong>' + Math.ceil(todoItems.totalCount / take) + '</strong>');
-
-	// Handle paging
-	var skip = 0,
-	take = 3;
-
-	$('#next').click(function(){
-	    skip++;
-	    refreshTodoItems();
-	});
-
-	$('#prev').click(function(){
-	    if(skip !== 0){
-	        skip--;
-	        refreshTodoItems();
-	    }
-	});
+	> filteringPaging/page.js
+    var filter = $('#query-filter')
+    var query = todoItemTable.where(function(val){
+        return this.complete == false &&
+        this.text.indexOf(val) == 0;
+    }, filter.val())
+    .skip(skip*take).take(take).includeTotalCount();
 
 5. Custom API - just show in the portal
 
@@ -84,55 +55,23 @@ AUTH
 4. Turn on permissions - show error
 5. How do we do authenticate
 
-	<div id='logged-in' class='auth'>
-	    You are logged in as <span id='login-name'></span>.
-	    <img id='login-picture' />
-	    <button id='log-out'>Log out</button>
-	</div>
-	<div id='logged-out' class='auth'>
-	    You are not logged in.
-	    <button>Log in</button>
-	</div>
+	> auth/index.html
 
-	// Handle auth
-	function refreshAuthDisplay() {
-	    var isLoggedIn = client.currentUser !== null;
-	    $('#logged-in').toggle(isLoggedIn);
-	    $('#logged-out').toggle(!isLoggedIn);
+	> auth/page.js
+    function logIn() {
+        client.login('facebook').then(refreshAuthDisplay, handleError);
+    }
 
 
-	    if (isLoggedIn) {
-	        var facebookId = client.currentUser.userId.split(':')[1],
-	            facebookGraphUri = 'http://graph.facebook.com/' + facebookId + '/';
-	        $('#login-picture').attr('src', facebookGraphUri + 'picture?type=square');
-	        $.get(facebookGraphUri + '?fields=name', function(result){
-	            $('#login-name').text(result.name);
-	        })
-	        refreshTodoItems();
-	    }
-	}
+    function logOut() {
+        client.logout();
+        refreshAuthDisplay();
+    }
 
-	function logIn() {
-	    client.login('facebook').then(refreshAuthDisplay, function(error){
-	        alert('Error during login: ' + error);
-	    });
-	}
-
-	function logOut() {
-	    client.logout();
-	    refreshAuthDisplay();
-	    $('#todo-items').empty();
-	    $('#summary').html('<strong>You must login to access data.</strong>');
-	}
-
-	refreshAuthDisplay();
-	$('#summary').html('<strong>You must login to access data.</strong>');          
-	$("#logged-out button").click(logIn);
-	$("#logged-in button").click(logOut);
 
 6. How do we authorize per user
 
-	> todoitem.insert.js
+	> table/todoitem.insert.js
 	function insert(item, user, request) {
 	    if (item.text.toLowerCase().indexOf('work') > -1) {
 	        request.respond(statusCodes.BAD_REQUEST, {
@@ -144,7 +83,7 @@ AUTH
 	    }
 	}
 
-	> todoitem.read.js
+	> table/todoitem.read.js
 	function read(query, user, request) {
 	   query.where({ userId: user.userId });    
 	   request.execute();
@@ -158,7 +97,7 @@ PUSH
 3. Clone repo
 4. Add server scripts for Pusher
 
-	> pusher.js
+	> shared/pusher.js
 	function generateClient(){
 		var Pusher = require('pusher');
 		return new Pusher(
@@ -179,11 +118,12 @@ PUSH
 		var pusher = generateClient();
 		pusher.trigger('todo', 'sendMessage', message);
 	}
-	> todoitem.insert.js, todoitem.update.js, todoitem.delete.js
+
+	> table/todoitem.insert.js, table/todoitem.update.js, table/todoitem.delete.js
     var pusher = require('../shared/pusher.js');
 	pusher.triggerRefresh();
 
-	> app.js
+	> push/page.js
     // Pusher support
     var pusher = new Pusher(killertodoPusherId),
         channel = pusher.subscribe('todo');
@@ -195,7 +135,7 @@ PUSH
 * Show logs tab if you haven't
 * Keep pusher console open
 
-	> app.js
+	> push/page.js
     channel.bind('sendMessage', function(payload){
         alert('Important message! ' + payload);
     });
