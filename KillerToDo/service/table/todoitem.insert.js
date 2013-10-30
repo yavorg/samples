@@ -1,12 +1,3 @@
-var Pusher = require('pusher'),
-	pusher = new Pusher(
-	{
-        appId: '{get from portal}',
-        key: '{get from portal}',
-        secret: '{get from portal}'
-	});
-
-
 function insert(item, user, request) {
     if (item.text.toLowerCase().indexOf('work') > -1) {
         request.respond(statusCodes.BAD_REQUEST, {
@@ -14,7 +5,8 @@ function insert(item, user, request) {
         });
     } else {
     	item.userId = user.userId;
-    	pusher.trigger('todo', 'refresh', {});
+        var pusher = require('../shared/pusher.js');
+    	pusher.triggerRefresh();
         request.execute();
     }
 }
