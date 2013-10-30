@@ -130,8 +130,8 @@
     $("#logged-in button").click(logOut);
 
     // Pusher support
-    var pusher = new Pusher('20b0fbcf18822724d672'),
-        channel = pusher.subscribe('todo');
+    var pusher = new Pusher(killertodoPusherId),
+        channel = pusher.subscribe(killertodoPusherChannel);
 
     channel.bind('refresh', refreshTodoItems);
 
