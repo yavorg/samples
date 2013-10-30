@@ -112,7 +112,7 @@ PUSH
 	}
 
 	exports.triggerRefresh = function() {
-		var pusher = generateClie 	nt();
+		var pusher = generateClient();
 		pusher.trigger('todo', 'refresh', {});
 		
 	};
@@ -152,7 +152,9 @@ PUSH
 
 DEMO SETUP
 1. Reset git repo
-2. Create mobile service 
-3. Update secrets.cs with mobile service creds
-4. Ditto for Pusher creds
-5. Go to Facebook, set redirect URL
+2. Empty downloads folder
+3. Create mobile service 
+4. Update secrets.cs with mobile service creds
+5. Ditto for Pusher creds
+6. Go to Facebook, set redirect URL
+7. Log out of Facebook
