@@ -131,7 +131,7 @@
 
     // Pusher support
     var pusher = new Pusher(killertodoPusherId),
-        channel = pusher.subscribe(killertodoPusherChannel);
+        channel = pusher.subscribe('todo');
 
     channel.bind('refresh', refreshTodoItems);
 
