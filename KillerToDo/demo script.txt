@@ -45,7 +45,8 @@ DATA
     }, filter.val())
     .skip(skip*take).take(take).includeTotalCount();
 
-5. Custom API - just show in the portal
+5. Custom API
+* Add this, show using mssql pacjage to do something like a drop
 
 AUTH
 
