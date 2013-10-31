@@ -1,4 +1,4 @@
-var uuid = require('../shared/uuid.js');
+var uuid = require('uuid');
 var azureBootstrap = require('../shared/azureBootstrap.js');
 
 exports.get = function(request, response) {
