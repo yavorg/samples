@@ -1,11 +1,8 @@
-var azure = require('azure');
+var azureBootstrap = require('../shared/azureBootstrap.js');
 var batchSize = 10;
     
 exports.post = function (request, response) {
-    var accountName = 'whatsnear';
-    var accountKey = '<TODO: REPLACE WITH REAL KEY>';
-    var host = accountName + '.blob.core.windows.net';
-    var blobService = azure.createBlobService(accountName, accountKey, host);
+    var blobService = azureBootstrap.createBlobService();
 
     var url = request.body.blobUrl;
     var indexOfQueryStart = url.indexOf("?");

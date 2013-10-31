@@ -38,6 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "table", "table", "{3F1B21EB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{71056A71-8BDE-4173-B641-DE9D3CB3E8C3}"
 	ProjectSection(SolutionItems) = preProject
+		..\Service\shared\azureBootstrap.js = ..\Service\shared\azureBootstrap.js
 		..\Service\shared\uuid.js = ..\Service\shared\uuid.js
 	EndProjectSection
 EndProject
