@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.20827.3
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{160337A6-3AD6-42A0-B9A4-F0E4DB6B6A7A}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,25 +9,37 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{160337
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{D4F5F746-1B09-4112-AE5A-7889B02F3903}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Node SQL", "Node SQL", "{CDB1F625-3C52-4F4C-A227-B75B0ABD6DD5}"
-	ProjectSection(SolutionItems) = preProject
-		..\Service\Node SQL\Geopartition.cs = ..\Service\Node SQL\Geopartition.cs
-		..\Service\Node SQL\geoserver-sql.js = ..\Service\Node SQL\geoserver-sql.js
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Node Static Files", "Node Static Files", "{CF26B282-32D5-4238-B7B0-B6027F3C6411}"
-	ProjectSection(SolutionItems) = preProject
-		..\Service\Node Static Files\geopartition.js = ..\Service\Node Static Files\geopartition.js
-		..\Service\Node Static Files\geoserver.js = ..\Service\Node Static Files\geoserver.js
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{D4F5F746-1B09-4112-AE5A-7889B02F3903}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeofenceLoader", "GeofenceLoader\GeofenceLoader.csproj", "{BE2A234D-45B5-4205-9330-5A485F529C6A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeofenceRegistrationManager", "GeofenceRegistrationManager\GeofenceRegistrationManager.csproj", "{84D27D77-7AE7-4D06-99CB-66320A7734C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App1", "App1\App1.csproj", "{DD29BE83-2F89-430C-B544-ED0774656AB6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api", "api", "{F58533CB-2FE2-4285-82C9-15FD611F6D2A}"
+	ProjectSection(SolutionItems) = preProject
+		..\Service\api\entering.js = ..\Service\api\entering.js
+		..\Service\api\entering.json = ..\Service\api\entering.json
+		..\Service\api\getbulkuploadsastoken.js = ..\Service\api\getbulkuploadsastoken.js
+		..\Service\api\getbulkuploadsastoken.json = ..\Service\api\getbulkuploadsastoken.json
+		..\Service\api\processgeofences.js = ..\Service\api\processgeofences.js
+		..\Service\api\processgeofences.json = ..\Service\api\processgeofences.json
+		..\Service\api\trafficmonitor.js = ..\Service\api\trafficmonitor.js
+		..\Service\api\trafficmonitor.json = ..\Service\api\trafficmonitor.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "table", "table", "{3F1B21EB-B108-41CD-B670-056622677E8D}"
+	ProjectSection(SolutionItems) = preProject
+		..\Service\table\campaign.json = ..\Service\table\campaign.json
+		..\Service\table\campaignTraffic.json = ..\Service\table\campaignTraffic.json
+		..\Service\table\geofence.json = ..\Service\table\geofence.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{71056A71-8BDE-4173-B641-DE9D3CB3E8C3}"
+	ProjectSection(SolutionItems) = preProject
+		..\Service\shared\uuid.js = ..\Service\shared\uuid.js
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,7 +114,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{CDB1F625-3C52-4F4C-A227-B75B0ABD6DD5} = {D4F5F746-1B09-4112-AE5A-7889B02F3903}
-		{CF26B282-32D5-4238-B7B0-B6027F3C6411} = {D4F5F746-1B09-4112-AE5A-7889B02F3903}
+		{F58533CB-2FE2-4285-82C9-15FD611F6D2A} = {D4F5F746-1B09-4112-AE5A-7889B02F3903}
+		{3F1B21EB-B108-41CD-B670-056622677E8D} = {D4F5F746-1B09-4112-AE5A-7889B02F3903}
+		{71056A71-8BDE-4173-B641-DE9D3CB3E8C3} = {D4F5F746-1B09-4112-AE5A-7889B02F3903}
 	EndGlobalSection
 EndGlobal
