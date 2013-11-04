@@ -7,3 +7,4 @@ packages
 partitioned
 node_modules
 MobileSecrets.cs
+secrets.js

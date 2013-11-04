@@ -1,7 +1,8 @@
 var azure = require('azure');
 var qs = require('querystring');
-var accountName = 'whatsnear';
-var accountKey = '<TODO: REPLACE WITH REAL KEY>';
+var secrets = require('./secrets.js');
+var accountName = secrets.storageAccountName;
+var accountKey = secrets.storageAccountKey;
 var host = accountName + '.blob.core.windows.net';
 
 exports.createBlobService = function () {
@@ -14,7 +15,7 @@ exports.createSasUrl = function (path) {
     var sharedAccessPolicy = createAccessPolicy();
 
     // Create the blobs urls with the SAS
-    var url = createResourceURLWithSAS(accountName, accountKey, path, sharedAccessPolicy, host);
+    return createResourceURLWithSAS(accountName, accountKey, path, sharedAccessPolicy, host);
 
 }
 
