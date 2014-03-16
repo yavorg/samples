@@ -1,0 +1,6 @@
+*.exe
+bin
+obj
+*.suo
+packages
+App_Data
