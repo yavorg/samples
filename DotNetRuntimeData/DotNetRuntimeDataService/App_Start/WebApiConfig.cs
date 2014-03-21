@@ -32,54 +32,38 @@ namespace DotNetRuntimeDataService
             Mapper.Initialize(cfg =>
             {
 
-                // TODO try remove this
-                //cfg.CreateMap<SystemProperty, MobileOrder>()
-                //   .ForMember(dst => dst.CreatedAt, map => map.MapFrom(src => src.CreatedAt));
-                //cfg.CreateMap<SystemProperty, MobileOrder>()
-                //    .ForMember(dst => dst.Deleted, map => map.MapFrom(src => src.Deleted));
-                //cfg.CreateMap<SystemProperty, MobileOrder>()
-                //    .ForMember(dst => dst.UpdatedAt, map => map.MapFrom(src => src.UpdatedAt));
-                //cfg.CreateMap<SystemProperty, MobileOrder>()
-                //    .ForMember(dst => dst.Version, map => map.MapFrom(src => src.Version));
-                //cfg.CreateMap<SystemProperty, MobileOrder>()
-                //.ForMember(dst => dst.Id, map => map.MapFrom(src => src.Id));
-
-                cfg.CreateMap<MobileOrder, SystemProperty>()
-                    .ForMember(dst => dst.CreatedAt, map => map.MapFrom(src => src.CreatedAt));
-                cfg.CreateMap<MobileOrder, SystemProperty>()
-                    .ForMember(dst => dst.Deleted, map => map.MapFrom(src => src.Deleted));
-                cfg.CreateMap<MobileOrder, SystemProperty>()
-                    .ForMember(dst => dst.UpdatedAt, map => map.MapFrom(src => src.UpdatedAt));
-                cfg.CreateMap<MobileOrder, SystemProperty>()
-                    .ForMember(dst => dst.Version, map => map.MapFrom(src => src.Version));
-                cfg.CreateMap<MobileOrder, SystemProperty>()
-                   .ForMember(dst => dst.Id, map => map.MapFrom(src => src.Id));
-
                 cfg.CreateMap<MobileOrder, Order>()
-                    .ForMember(dst => dst.Property, map => map.MapFrom(x => Mapper.Map<MobileOrder, SystemProperty>(x)));
+                    .AfterMap((mobileOrder, order) =>
+                    {
+                        order.EntityData = new MyEntityData()
+                        {
+                            Id = mobileOrder.Id,
+                            UpdatedAt = mobileOrder.UpdatedAt,
+                            CreatedAt = mobileOrder.CreatedAt,
+                            Version = mobileOrder.Version,
+                            Deleted = mobileOrder.Deleted
+                        };
+                    });
+
 
                 cfg.CreateMap<Order, MobileOrder>()
-                    .ForMember(dst => dst.Id, map => map.MapFrom(x => x.Property.Id))
-                    .ForMember(dst => dst.UpdatedAt, map => map.MapFrom(x => x.Property.UpdatedAt))
-                    .ForMember(dst => dst.CreatedAt, map => map.MapFrom(x => x.Property.CreatedAt))
-                    .ForMember(dst => dst.Version, map => map.MapFrom(x => x.Property.Version))
-                    .ForMember(dst => dst.Deleted, map => map.MapFrom(x => x.Property.Deleted));
- 
+                    .ForMember(dst => dst.Id, map => map.MapFrom(x => x.EntityData.Id))
+                    .ForMember(dst => dst.UpdatedAt, map => map.MapFrom(x => x.EntityData.UpdatedAt))
+                    .ForMember(dst => dst.CreatedAt, map => map.MapFrom(x => x.EntityData.CreatedAt))
+                    .ForMember(dst => dst.Version, map => map.MapFrom(x => x.EntityData.Version))
+                    .ForMember(dst => dst.Deleted, map => map.MapFrom(x => x.EntityData.Deleted));
+
             });
 
             Database.SetInitializer(new DotNetRuntimeDataInitializer());
             Database.SetInitializer(new ExistingInitializer());
 
-            /*
-            string SqlClientProvider = "System.Data.SqlClient";
-            DbConfiguration.Loaded += (sender, e) => e.ReplaceService<Func<MigrationSqlGenerator>>(
-                (s, k) => SqlClientProvider.Equals(k as string, StringComparison.OrdinalIgnoreCase) && s().GetType() == typeof(SqlServerMigrationSqlGenerator) ? () => new EntityTableSqlGenerator() : s);
-            */
-            
+
         }
 
     }
 
+    
     public class DotNetRuntimeDataInitializer : DropCreateDatabaseIfModelChanges<DotNetRuntimeDataContext>
     {
         protected override void Seed(DotNetRuntimeDataContext context)
@@ -98,11 +82,10 @@ namespace DotNetRuntimeDataService
             base.Seed(context);
         }
     }
+    
 
     public class ExistingInitializer : DropCreateDatabaseIfModelChanges<ExistingContext>
     {
-           
-        
         protected override void Seed(ExistingContext context)
         {
             List<Order> orders = new List<Order>
@@ -122,11 +105,12 @@ namespace DotNetRuntimeDataService
                     orders[2]}},
             };
 
-            List<SystemProperty> properties = new List<SystemProperty>
+
+            List<MyEntityData> properties = new List<MyEntityData>
             {
-                new SystemProperty { Order = orders[0], Id = "one"},
-                new SystemProperty { Order = orders[1], Id = "two"},
-                new SystemProperty { Order = orders[2], Id = "three"}
+                new MyEntityData { Order = orders[0], Id = Guid.NewGuid().ToString()},
+                new MyEntityData { Order = orders[1], Id = Guid.NewGuid().ToString()},
+                new MyEntityData { Order = orders[2], Id = Guid.NewGuid().ToString()}
             };
 
             foreach (Customer customer in customers)
@@ -134,10 +118,11 @@ namespace DotNetRuntimeDataService
                 context.Customers.Add(customer);
             }
 
-            foreach (SystemProperty prop in properties)
+            foreach (MyEntityData prop in properties)
             {
-                context.SystemProperties.Add(prop);
+                context.EntityDatas.Add(prop);
             }
+
 
             base.Seed(context);
         }

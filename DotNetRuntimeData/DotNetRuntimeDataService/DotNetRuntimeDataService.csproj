@@ -198,13 +198,13 @@
     <Compile Include="Controllers\TodoItemController.cs" />
     <Compile Include="DataObjects\MobileOrder.cs" />
     <Compile Include="DataObjects\MongoTodoItem.cs" />
+    <Compile Include="DataObjects\MyEntityData.cs" />
     <Compile Include="DataObjects\TodoItem.cs" />
-    <Compile Include="Models\DotNetRuntimeDataContext.cs" />
     <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\DotNetRuntimeDataContext.cs" />
     <Compile Include="Models\ExistingContext.cs" />
     <Compile Include="Models\ExistingDomainManager.cs" />
     <Compile Include="Models\Order.cs" />
-    <Compile Include="Models\SystemProperty.cs" />
     <Compile Include="ScheduledJobs\SampleJob.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

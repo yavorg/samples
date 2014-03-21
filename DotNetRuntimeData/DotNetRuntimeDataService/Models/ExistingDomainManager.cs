@@ -29,13 +29,18 @@ namespace DotNetRuntimeDataService.Models
             return LookupEntity(o => o.OrderId == orderId);
         }
 
+        private async Task VerifyCustomer(int customerId, string customerName)
+        {
+            Customer customer = await this.context.Customers.FindAsync(customerId);
+            if (customer == null)
+            {
+                throw new HttpResponseException(Request.CreateBadRequestResponse("Customer with name '{0}' was not found", customerName));
+            }
+        }
+
         public override async Task<MobileOrder> InsertAsync(MobileOrder data)
         {
-            Customer[] customers = await this.context.Customers.Where(c => c.Name.Equals(data.CustomerName, StringComparison.Ordinal)).ToArrayAsync();
-            if (customers.Length == 0)
-            {
-                throw new HttpResponseException(Request.CreateBadRequestResponse("Customer with name '{0}' was not found", data.CustomerName));
-            }
+            await VerifyCustomer(data.CustomerId, data.CustomerName);
 
             return await base.InsertAsync(data);
         }
@@ -48,11 +53,7 @@ namespace DotNetRuntimeDataService.Models
 
         public override async Task<MobileOrder> ReplaceAsync(string id, MobileOrder data)
         {
-            Customer[] customers = await this.context.Customers.Where(c => string.Equals(c.Name, data.CustomerName, StringComparison.Ordinal)).ToArrayAsync();
-            if (customers.Length == 0)
-            {
-                throw new HttpResponseException(Request.CreateBadRequestResponse("Customer with name '{0}' was not found", data.CustomerName));
-            }
+            await VerifyCustomer(data.CustomerId, data.CustomerName);
 
             return await base.ReplaceAsync(id, data);
         }

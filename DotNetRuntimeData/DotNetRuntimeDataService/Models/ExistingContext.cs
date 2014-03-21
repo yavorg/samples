@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DotNetRuntimeDataService.DataObjects;
+using Microsoft.WindowsAzure.Mobile.Service.Tables;
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
-using System.Web;
 
 namespace DotNetRuntimeDataService.Models
 {
@@ -13,10 +13,19 @@ namespace DotNetRuntimeDataService.Models
         {
         }
 
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Conventions.Add(
+                new AttributeToColumnAnnotationConvention<TableColumnAttribute, string>(
+                    "ServiceTableColumn", (property, attributes) => attributes.Single().ColumnType.ToString()));
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public DbSet<Customer> Customers { get; set; }
 
         public DbSet<Order> Orders { get; set; }
 
-        public DbSet<SystemProperty> SystemProperties { get; set; }
+        public DbSet<MyEntityData> EntityDatas { get; set; }
     }
 }

@@ -14,6 +14,8 @@ namespace DotNetRuntimeDataService.DataObjects
         public int Quantity { get; set; }
 
         [Required]
+        public int CustomerId { get; set; }
+
         public string CustomerName { get; set; }
     }
 }
