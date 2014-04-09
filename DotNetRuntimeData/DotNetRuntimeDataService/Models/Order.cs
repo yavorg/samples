@@ -1,5 +1,4 @@
 ﻿using DotNetRuntimeDataService.DataObjects;
-using System.ComponentModel.DataAnnotations;
 
 namespace DotNetRuntimeDataService.Models
 {

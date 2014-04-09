@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
-using Microsoft.WindowsAzure.Mobile.Service;
+﻿using Microsoft.WindowsAzure.Mobile.Service;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace DotNetRuntimeDataService.DataObjects
 {

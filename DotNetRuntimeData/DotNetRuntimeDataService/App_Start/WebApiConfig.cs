@@ -1,17 +1,12 @@
-﻿using System;
+﻿using AutoMapper;
+using DotNetRuntimeDataService.DataObjects;
+using DotNetRuntimeDataService.Models;
+using Microsoft.WindowsAzure.Mobile.Service;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Web.Http;
-using DotNetRuntimeDataService.DataObjects;
-using DotNetRuntimeDataService.Models;
-using Microsoft.WindowsAzure.Mobile.Service;
-using AutoMapper;
-using DotNetRuntimeDataService.DataObjects;
-using System.Data.Entity.Migrations.Sql;
-using System.Data.Entity.SqlServer;
-using Microsoft.WindowsAzure.Mobile.Service.Tables;
-using System.Data.SqlClient;
 
 namespace DotNetRuntimeDataService
 {
@@ -80,33 +75,11 @@ namespace DotNetRuntimeDataService
 
             });
 
-            Database.SetInitializer(new DotNetRuntimeDataInitializer());
             Database.SetInitializer(new ExistingInitializer());
 
         }
 
     }
-
-    
-    public class DotNetRuntimeDataInitializer : DropCreateDatabaseIfModelChanges<DotNetRuntimeDataContext>
-    {
-        protected override void Seed(DotNetRuntimeDataContext context)
-        {
-            List<TodoItem> todoItems = new List<TodoItem>
-            {
-                new TodoItem { Id = "1", Text = "First item", Complete = false },
-                new TodoItem { Id = "2", Text = "Second item", Complete = false },
-            };
-
-            foreach (TodoItem todoItem in todoItems)
-            {
-                context.Set<TodoItem>().Add(todoItem);
-            }
-
-            base.Seed(context);
-        }
-    }
-    
 
     public class ExistingInitializer : DropCreateDatabaseIfModelChanges<ExistingContext>
     {

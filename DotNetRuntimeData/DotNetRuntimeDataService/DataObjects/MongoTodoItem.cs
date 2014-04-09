@@ -2,7 +2,7 @@
 
 namespace DotNetRuntimeDataService.DataObjects
 {
-    public class TodoItem : DocumentData
+    public class MongoTodoItem : DocumentData
     {
         public string Text { get; set; }
 

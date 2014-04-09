@@ -1,15 +1,13 @@
-﻿using DotNetRuntimeDataService.DataObjects;
+﻿using AutoMapper;
+using DotNetRuntimeDataService.DataObjects;
 using Microsoft.WindowsAzure.Mobile.Service;
 using System;
-using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
 using System.Web.Http.OData;
-using System.Data.Entity;
-using AutoMapper;
 
 namespace DotNetRuntimeDataService.Models
 {

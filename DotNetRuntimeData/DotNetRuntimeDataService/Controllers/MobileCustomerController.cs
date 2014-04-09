@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Http.OData;
-using DotNetRuntimeDataService.DataObjects;
+﻿using DotNetRuntimeDataService.DataObjects;
 using DotNetRuntimeDataService.Models;
 using Microsoft.WindowsAzure.Mobile.Service;
 using Microsoft.WindowsAzure.Mobile.Service.Security;
-using Microsoft.WindowsAzure.Mobile.Service.Tables;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.OData;
 
 namespace DotNetRuntimeDataService.Controllers
 {

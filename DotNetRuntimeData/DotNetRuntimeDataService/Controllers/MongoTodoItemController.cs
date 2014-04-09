@@ -1,11 +1,10 @@
-﻿using System.Linq;
+﻿using DotNetRuntimeDataService.DataObjects;
+using Microsoft.WindowsAzure.Mobile.Service;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.OData;
-using Microsoft.WindowsAzure.Mobile.Service;
-using DotNetRuntimeDataService.DataObjects;
-using DotNetRuntimeDataService.Models;
 
 namespace DotNetRuntimeDataService.Controllers
 {
