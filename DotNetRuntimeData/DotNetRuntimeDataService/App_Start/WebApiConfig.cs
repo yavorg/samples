@@ -31,33 +31,57 @@ namespace DotNetRuntimeDataService
 
             Mapper.Initialize(cfg =>
             {
-
                 cfg.CreateMap<MobileOrder, Order>()
                     .AfterMap((mobileOrder, order) =>
                     {
-                        order.EntityData = new MyEntityData()
+                        // In case of an insert
+                        if (order.EntityData == null)
                         {
-                            Id = mobileOrder.Id,
-                            UpdatedAt = mobileOrder.UpdatedAt,
-                            CreatedAt = mobileOrder.CreatedAt,
-                            Version = mobileOrder.Version,
-                            Deleted = mobileOrder.Deleted
-                        };
+                            order.EntityData = new MyEntityData()
+                            {
+                                Id = mobileOrder.Id
+                            };
+                        }
+
+                        order.EntityData.UpdatedAt = mobileOrder.UpdatedAt;
                     });
 
+                cfg.CreateMap<MobileCustomer, Customer>()
+                    .AfterMap((mobileCustomer, customer) =>
+                    {
+                        // In case of an insert
+                        if (customer.EntityData == null)
+                        {
+                            customer.EntityData = new MyEntityData()
+                            {
+                                Id = mobileCustomer.Id
+                            };
+                        }
+
+                        customer.EntityData.UpdatedAt = mobileCustomer.UpdatedAt;
+                    });
 
                 cfg.CreateMap<Order, MobileOrder>()
                     .ForMember(dst => dst.Id, map => map.MapFrom(x => x.EntityData.Id))
                     .ForMember(dst => dst.UpdatedAt, map => map.MapFrom(x => x.EntityData.UpdatedAt))
                     .ForMember(dst => dst.CreatedAt, map => map.MapFrom(x => x.EntityData.CreatedAt))
                     .ForMember(dst => dst.Version, map => map.MapFrom(x => x.EntityData.Version))
+                    .ForMember(dst => dst.Deleted, map => map.MapFrom(x => x.EntityData.Deleted))
+                    .ForMember(dst => dst.MobileCustomerId, map => map.MapFrom(x => x.Customer.EntityData.Id))
+                    .ForMember(dst => dst.MobileCustomerName, map => map.MapFrom(x => x.Customer.Name));
+
+                cfg.CreateMap<Customer, MobileCustomer>()
+                    .ForMember(dst => dst.Id, map => map.MapFrom(x => x.EntityData.Id))
+                    .ForMember(dst => dst.UpdatedAt, map => map.MapFrom(x => x.EntityData.UpdatedAt))
+                    .ForMember(dst => dst.CreatedAt, map => map.MapFrom(x => x.EntityData.CreatedAt))
+                    .ForMember(dst => dst.Version, map => map.MapFrom(x => x.EntityData.Version))
                     .ForMember(dst => dst.Deleted, map => map.MapFrom(x => x.EntityData.Deleted));
+
 
             });
 
             Database.SetInitializer(new DotNetRuntimeDataInitializer());
             Database.SetInitializer(new ExistingInitializer());
-
 
         }
 
@@ -110,19 +134,16 @@ namespace DotNetRuntimeDataService
             {
                 new MyEntityData { Order = orders[0], Id = Guid.NewGuid().ToString()},
                 new MyEntityData { Order = orders[1], Id = Guid.NewGuid().ToString()},
-                new MyEntityData { Order = orders[2], Id = Guid.NewGuid().ToString()}
+                new MyEntityData { Order = orders[2], Id = Guid.NewGuid().ToString()},
+                new MyEntityData { Customer = customers[0], Id = Guid.NewGuid().ToString()},
+                new MyEntityData { Customer = customers[1], Id = Guid.NewGuid().ToString()},
+                new MyEntityData { Customer = customers[2], Id = Guid.NewGuid().ToString()}
             };
-
-            foreach (Customer customer in customers)
-            {
-                context.Customers.Add(customer);
-            }
 
             foreach (MyEntityData prop in properties)
             {
                 context.EntityDatas.Add(prop);
             }
-
 
             base.Seed(context);
         }

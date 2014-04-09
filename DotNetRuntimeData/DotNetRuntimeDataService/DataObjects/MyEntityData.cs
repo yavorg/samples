@@ -10,8 +10,9 @@ namespace DotNetRuntimeDataService.DataObjects
 {
     public class MyEntityData : EntityData
     {
-        [Required]
         public virtual Order Order { get; set; }
+
+        public virtual Customer Customer { get; set; }
 
     }
 }

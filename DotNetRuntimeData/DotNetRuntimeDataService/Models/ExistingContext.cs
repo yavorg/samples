@@ -19,6 +19,13 @@ namespace DotNetRuntimeDataService.Models
                 new AttributeToColumnAnnotationConvention<TableColumnAttribute, string>(
                     "ServiceTableColumn", (property, attributes) => attributes.Single().ColumnType.ToString()));
 
+            modelBuilder.Entity<MyEntityData>()
+                .HasOptional(e => e.Order)
+                .WithOptionalDependent(o => o.EntityData);
+            modelBuilder.Entity<MyEntityData>()
+                .HasOptional(e => e.Customer)
+                .WithOptionalDependent(o => o.EntityData);
+
             base.OnModelCreating(modelBuilder);
         }
 

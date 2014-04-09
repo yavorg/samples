@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotNetRuntimeDataService.DataObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,5 +13,7 @@ namespace DotNetRuntimeDataService.Models
         public string Name { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
+
+        public virtual MyEntityData EntityData { get; set; }
     }
 }

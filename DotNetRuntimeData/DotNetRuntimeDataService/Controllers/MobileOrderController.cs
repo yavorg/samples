@@ -16,7 +16,7 @@ namespace DotNetRuntimeDataService.Controllers
         {
             base.Initialize(controllerContext);
             ExistingContext context = new ExistingContext();
-            DomainManager = new ExistingDomainManager(context, Request, Services);
+            DomainManager = new MobileOrderDomainManager(context, Request, Services);
         }
 
         // GET tables/MobileOrder

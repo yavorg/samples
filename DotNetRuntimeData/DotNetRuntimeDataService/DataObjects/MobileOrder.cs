@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Microsoft.WindowsAzure.Mobile.Service;
+using Newtonsoft.Json;
 
 namespace DotNetRuntimeDataService.DataObjects
 {
@@ -13,9 +14,12 @@ namespace DotNetRuntimeDataService.DataObjects
 
         public int Quantity { get; set; }
 
-        [Required]
+        [JsonIgnore]
         public int CustomerId { get; set; }
 
-        public string CustomerName { get; set; }
+        [Required]
+        public string MobileCustomerId { get; set; }
+
+        public string MobileCustomerName { get; set; }
     }
 }
