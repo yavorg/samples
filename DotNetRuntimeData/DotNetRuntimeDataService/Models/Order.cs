@@ -10,6 +10,8 @@ namespace DotNetRuntimeDataService.Models
 
         public int Quantity { get; set; }
 
+        public bool Completed { get; set; }
+
         public int CustomerId { get; set; }
       
         public virtual Customer Customer { get; set; }

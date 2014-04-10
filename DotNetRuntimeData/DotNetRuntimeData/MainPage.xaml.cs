@@ -1,63 +1,57 @@
-﻿using Microsoft.WindowsAzure.MobileServices;
-using Newtonsoft.Json;
+﻿using DotNetRuntimeData.DataObjects;
+using Microsoft.WindowsAzure.MobileServices;
+using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
+using Microsoft.WindowsAzure.MobileServices.Sync;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace DotNetRuntimeData
 {
-    public class TodoItem
-    {
-        public string Id { get; set; }
-
-        [JsonProperty(PropertyName = "text")]
-        public string Text { get; set; }
-
-        [JsonProperty(PropertyName = "complete")]
-        public bool Complete { get; set; }
-    }
-
     public sealed partial class MainPage : Page
     {
-        private MobileServiceCollection<TodoItem, TodoItem> items;
-        private IMobileServiceTable<TodoItem> todoTable = App.MobileService.GetTable<TodoItem>();
+        private MobileServiceCollection<MobileOrder, MobileOrder> orders;
+        private MobileServiceCollection<MobileCustomer, MobileCustomer> customers;
+        private IMobileServiceSyncTable<MobileOrder> ordersTable = App.MobileService.GetSyncTable<MobileOrder>();
+        private IMobileServiceSyncTable<MobileCustomer> customersTable = App.MobileService.GetSyncTable<MobileCustomer>();
 
         public MainPage()
         {
             this.InitializeComponent();
         }
 
-        private async void InsertTodoItem(TodoItem todoItem)
+        private async Task Initialize()
         {
-            // This code inserts a new TodoItem into the database. When the operation completes
-            // and Mobile Services has assigned an Id, the item is added to the CollectionView
-            await todoTable.InsertAsync(todoItem);
-            items.Add(todoItem);
+            if (!App.MobileService.SyncContext.IsInitialized)
+            {
+                var store = new MobileServiceSQLiteStore("localdb8.db");
+                store.DefineTable<MobileOrder>();
+                store.DefineTable<MobileCustomer>();
+
+                await App.MobileService.SyncContext.InitializeAsync(store);
+            }
+
+            await RefreshOrderList();
         }
 
-        private async void RefreshTodoItems()
+        private async Task RefreshOrderList()
         {
             MobileServiceInvalidOperationException exception = null;
             try
             {
-                // This code refreshes the entries in the list view by querying the TodoItems table.
-                // The query excludes completed TodoItems
-                items = await todoTable
-                    .Where(todoItem => todoItem.Complete == false)
+                orders = await ordersTable
+                    .OrderByDescending(x => x.Id)
                     .ToCollectionAsync();
-                this.ButtonSave.IsEnabled = true;
+
+                customers = await customersTable.CreateQuery().ToCollectionAsync();
+
+                ListItems.ItemsSource = orders;
+                TextCustomer.ItemsSource = customers;
             }
             catch (MobileServiceInvalidOperationException e)
             {
@@ -68,41 +62,111 @@ namespace DotNetRuntimeData
             {
                 await new MessageDialog(exception.Message, "Error loading items").ShowAsync();
             }
-            else
+        }
+
+        private async void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            var customer = TextCustomer.SelectedItem as MobileCustomer;
+
+            if (customer != null)
             {
-                ListItems.ItemsSource = items;
+                var order = new MobileOrder
+                {
+                    Item = TextOrder.Text,
+                    MobileCustomerId = customer.Id,
+                    Quantity = 1,
+                    MobileCustomerName = customer.Name
+                };
+
+                await ordersTable.InsertAsync(order);
+                orders.Insert(0, order);
+
+                // clear the UI fields
+                TextCustomer.SelectedIndex = -1;
+                TextOrder.Text = String.Empty;
+                TextOrder.Focus(FocusState.Programmatic);
             }
         }
 
-        private async void UpdateCheckedTodoItem(TodoItem item)
+        private async void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
-            // This code takes a freshly completed TodoItem and updates the database. When the MobileService 
-            // responds, the item is removed from the list 
-            await todoTable.UpdateAsync(item);
-            items.Remove(item);
+            var button = (sender as Button);
+            var order = button.DataContext as MobileOrder;
+            await ordersTable.UpdateAsync(order);
+            button.IsEnabled = false;
         }
 
-        private void ButtonRefresh_Click(object sender, RoutedEventArgs e)
+        private async void ButtonSync_Click(object sender, RoutedEventArgs e)
         {
-            RefreshTodoItems();
+            MessageDialog d = null;
+            ButtonSync.IsEnabled = false;
+
+            try
+            {
+                await App.MobileService.SyncContext.PushAsync();
+                await this.ordersTable.PullAsync();
+                await this.customersTable.PullAsync();
+            }
+            catch (Exception ex)
+            {
+                d = new MessageDialog(ex.ToString());
+            }
+
+            if (d != null)
+            {
+                await d.ShowAsync();
+            }
+
+            await RefreshOrderList();
+            ButtonSync.IsEnabled = true;
         }
 
-        private void ButtonSave_Click(object sender, RoutedEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            var todoItem = new TodoItem { Text = TextInput.Text };
-            InsertTodoItem(todoItem);
+            if (e.NavigationMode == NavigationMode.New)
+                await Initialize();
+        }
+
+        private void TextOrder_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                ButtonAdd.Focus(FocusState.Programmatic);
+            }
+        }
+
+        private void CheckEnableAdd()
+        {
+            ButtonAdd.IsEnabled = (TextOrder.Text.Length > 0) && (TextCustomer.SelectedItem != null);
+        }
+
+        private void TextCustomer_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CheckEnableAdd();
+        }
+
+        private void TextOrder_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CheckEnableAdd();
+        }
+
+
+        private void TextOrderDetail_LostFocus(object sender, RoutedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            Button save = (textBox.Parent as Grid).Children.First(x => x is Button) as Button;
+            if (!textBox.Text.Equals((textBox.DataContext as MobileOrder).Item))
+            {
+                save.IsEnabled = true;
+            }
         }
 
         private void CheckBoxComplete_Checked(object sender, RoutedEventArgs e)
         {
-            CheckBox cb = (CheckBox)sender;
-            TodoItem item = cb.DataContext as TodoItem;
-            UpdateCheckedTodoItem(item);
-        }
+            var checkbox = (CheckBox)sender;
+            var order = checkbox.DataContext as MobileOrder;
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            RefreshTodoItems();
+            ordersTable.UpdateAsync(order);
         }
     }
 }

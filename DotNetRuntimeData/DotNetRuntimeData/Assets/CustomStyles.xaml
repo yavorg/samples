@@ -1,0 +1,170 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    >
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+
+            <!--
+        ========================================================================
+        OVERRIDE STANDARD SYSTEM COLOR BRUSH 
+        The below are some of the key system defined styles that can be 
+        overriden to reflect your branding colors.
+    
+        > AppBarBackgroundThemeBrush: Background Color for the App Bar
+        > AppBarBorderThemeBrush: Border Color for the App Bar
+        > AppBarItemForegroundThemeBrush: Foreground Color for App Bar Items
+
+        > ApplicationForegroundThemeBrush: Primary Foreground Color
+        > ApplicationHeaderForegroundThemeBrush: Forground Color for Header Text
+        > ApplicationSecondaryForegroundThemeBrush: Secondary Foreground Color
+        > ApplicationPageBackgroundThemeBrush: Page Background Color
+
+        > BackButtonBackgroundThemeBrush: Background Color for Back Button
+        > BackButtonForegroundThemeBrush: Foreground Color for Back Button
+        ========================================================================
+    -->
+            <SolidColorBrush x:Key="AppBarBackgroundThemeBrush" Color="#CCab673a" />
+            <SolidColorBrush x:Key="AppBarBorderThemeBrush" Color="#50000000" />
+
+            <SolidColorBrush x:Key="AppBarItemForegroundThemeBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="AppBarItemPointerOverForegroundThemeBrush" Color="#ab673a" />
+            <SolidColorBrush x:Key="AppBarItemPointerOverBackgroundThemeBrush" Color="#80FFFFFF" />
+            <SolidColorBrush x:Key="AppBarItemPressedForegroundThemeBrush" Color="#50ab673a" />
+
+            <SolidColorBrush x:Key="ApplicationForegroundThemeBrush" Color="#ab673a" />
+            <SolidColorBrush x:Key="ApplicationHeaderForegroundThemeBrush" Color="#ab673a" />
+            <SolidColorBrush x:Key="ApplicationSecondaryForegroundThemeBrush" Color="#99000000" />
+
+            <SolidColorBrush x:Key="BackButtonBackgroundThemeBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="BackButtonForegroundThemeBrush" Color="#FFFFFFFF" />
+
+            <SolidColorBrush x:Key="SearchBoxButtonBackgroundThemeBrush" Color="#ab673a" />
+            <SolidColorBrush x:Key="SearchBoxButtonPointerOverBackgroundThemeBrush" Color="#C0ab673a" />
+            
+            <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="#ab673a" />
+            <Thickness x:Key="FlyoutContentThemePadding">5</Thickness>
+            <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="ApplicationForegroundThemeBrush" Color="#ab673a" />
+
+            <SolidColorBrush x:Key="AppBarItemForegroundThemeBrush" Color="#ab673a" />
+            <SolidColorBrush x:Key="AppBarItemPointerOverForegroundThemeBrush" Color="#ab673a" />
+            <SolidColorBrush x:Key="AppBarItemPointerOverBackgroundThemeBrush" Color="#80FFFFFF" />
+            <SolidColorBrush x:Key="AppBarItemPressedForegroundThemeBrush" Color="#FFFFFF" />
+
+            <SolidColorBrush x:Key="BackButtonForegroundThemeBrush" Color="#ab673a" />
+
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!--
+        ========================================================================
+        DEFINE NEW CUSTOM STYLES:
+        
+        PageBackgroundImage: Background Image for the background of all pages
+        PageHeaderBackgroundBrush: Background Color for the Page Title Header
+        TileBackgroundBrush: Background Color for the various Tiles
+        InactiveTileBackgroundBrush: Background Color for the inactive Tiles
+        ========================================================================
+    -->
+    <ImageBrush x:Key="PageBackgroundImageBrush" ImageSource="/Assets/Background.png" />
+    <SolidColorBrush x:Key="SnappedPageBackgroundBrush" Color="#EFEFEF"/>
+    <SolidColorBrush x:Key="PageHeaderBackgroundBrush" Color="#ab673a" />
+    <SolidColorBrush x:Key="TileBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="DarkTileBackgroundBrush" Color="#ab673a" />
+    <SolidColorBrush x:Key="InactiveTileBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="TileBorderBrush" Color="#50ab673a"/>
+    <SolidColorBrush x:Key="FlyoutHeaderBackgroundBrush" Color ="#ab673a"/>
+    <SolidColorBrush x:Key="ButtonBackgroundBrush" Color="#ab673a"/>
+    
+    <!-- Page layout roots typically use entrance animations and a theme-appropriate background color -->
+    <Style x:Key="LayoutRootStyle" TargetType="Panel">
+        <Setter Property="Background" Value="{StaticResource PageBackgroundImageBrush}"/>
+        <Setter Property="ChildrenTransitions">
+            <Setter.Value>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="SnappedLayoutRootStyle" TargetType="Panel">
+        <Setter Property="Background" Value="{StaticResource SnappedPageBackgroundBrush}"/>
+        <Setter Property="ChildrenTransitions">
+            <Setter.Value>
+                <TransitionCollection>
+                    <EntranceThemeTransition/>
+                </TransitionCollection>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        ========================================================================
+        OVERRIDE STANDARD SYSTEM TEXT BLOCK STYLES
+        The below are the key system defined text bloxk styles that can be 
+        overriden to reflect your branding colors.
+
+        > HeaderTextBlockStyle: Style for the Page Header Text
+        > SubheaderTextBlockStyle: Style for the Group/Section Header Text
+        > TitleTextBlockStyle: Style for the Title text within a section
+        > SubtitleTextBlockStyle: Style for the sub title text within a section
+        
+        > BodyTextBlockStyle: Style for the body text
+        > CaptionTextBlockStyle: Style for the caption text
+        ========================================================================
+    -->
+
+    <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="48"/>
+        <Setter Property="FontWeight" Value="Light"/>
+        <Setter Property="LineHeight" Value="40"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationHeaderForegroundThemeBrush}"/>
+    </Style>
+
+    <Style x:Key="SubheaderTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="26.667"/>
+        <Setter Property="FontWeight" Value="Light"/>
+        <Setter Property="LineHeight" Value="20"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationForegroundThemeBrush}"/>
+    </Style>
+
+    <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationForegroundThemeBrush}"/>
+    </Style>
+
+    <Style x:Key="SubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}"/>
+    </Style>
+
+    <Style x:Key="BodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiLight"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}"/>
+    </Style>
+
+    <Style x:Key="CaptionTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}"/>
+    </Style>
+
+    <Style x:Key="SettingsFlyoutSectionStyle" TargetType="StackPanel">
+        <Setter Property="Margin" Value="0,-30,0,39"/>
+    </Style>
+
+    <Style x:Key="FlyoutLayoutRootStyle" TargetType="Panel">
+        <Setter Property="Background" Value="#ab673a" />
+    </Style>
+
+</ResourceDictionary>
+

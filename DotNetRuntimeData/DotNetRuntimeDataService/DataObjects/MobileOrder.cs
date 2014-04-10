@@ -10,6 +10,8 @@ namespace DotNetRuntimeDataService.DataObjects
 
         public int Quantity { get; set; }
 
+        public bool Completed { get; set; }
+
         [JsonIgnore]
         public int CustomerId { get; set; }
 

@@ -7,62 +7,122 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <Grid Style="{StaticResource LayoutRootStyle}" x:Name="RootGrid" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-    <Grid Background="White">
-
-        <Grid Margin="50,50,10,10">
+        <Grid Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1" Width="310"  Height="50" VerticalAlignment="Top" HorizontalAlignment="Left"
+                  Background="{StaticResource PageHeaderBackgroundBrush}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text ="{Binding Mode=OneWay, Source={StaticResource AppName}}" Style="{StaticResource TitleTextBlockStyle}"
+                               Foreground="White" Margin="10,10,130,0"/>
+                    <Image Source="/Assets/Hub-Page-Title-Logo.png" Height="40" Margin="5"/>
+
+                </StackPanel>
+            </Grid>
+            <TextBlock x:Name="pageTitle" Text="MY DASHBOARD" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
+                       IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
+
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.Row="1" Margin="120, 0, 120, 90">
+
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,20">
-                <StackPanel>
-                    <TextBlock Foreground="#0094ff" FontFamily="Segoe UI Light" Margin="0,0,0,6">WINDOWS AZURE MOBILE SERVICES</TextBlock>
-                    <TextBlock Foreground="Gray" FontFamily="Segoe UI Light" FontSize="45" >DotNetRuntimeData</TextBlock>
-                </StackPanel>
-            </Grid>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-
-            <Grid Grid.Row="1">
-                <StackPanel>
-
-                    <local:QuickStartTask Number="1" Title="Insert a TodoItem" Description="Enter some text below and click Save to insert a new todo item into your database" />
-
-                    <StackPanel Orientation="Horizontal" Margin="72,0,0,0">
-                        <TextBox Name="TextInput" Margin="5" MinWidth="300"></TextBox>
-                        <Button Name="ButtonSave" IsEnabled="False" Click="ButtonSave_Click">Save</Button>
-                    </StackPanel>
-
-                </StackPanel>
-            </Grid>
-
-            <Grid Grid.Row="1" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <StackPanel>
-                    <local:QuickStartTask Number="2" Title="Query and Update Data" Description="Click refresh below to load the unfinished TodoItems from your database. Use the checkbox to complete and update your TodoItems" />
-                    <Button Margin="72,0,0,0" Name="ButtonRefresh" Click="ButtonRefresh_Click">Refresh</Button>
+
+                <TextBlock Text="Create a New Job" Grid.Row="0" Grid.ColumnSpan="3" Margin="10" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="10" VerticalAlignment="Center" Style="{StaticResource SubtitleTextBlockStyle}" >Customer:</TextBlock>
+                <ComboBox  Grid.Row="1" Grid.Column="1" Margin="10" Name="TextCustomer" Width="250" DisplayMemberPath="Name" VerticalAlignment="Center" HorizontalAlignment="Left" SelectionChanged="TextCustomer_SelectionChanged"></ComboBox>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Margin="10" VerticalAlignment="Top" Style="{StaticResource SubtitleTextBlockStyle}">Description:</TextBlock>
+                <TextBox   Grid.Row="2" Grid.Column="1" Margin="10" Name="TextOrder" Width="700" TextWrapping="Wrap" VerticalAlignment="Center" Height="64" TextChanged="TextOrder_TextChanged" KeyDown="TextOrder_KeyDown"></TextBox>
+                <Button    Grid.Row="2" Grid.Column="2" Name="ButtonAdd" Margin="5,10,10,10" Click="ButtonAdd_Click" IsEnabled="false" VerticalAlignment="Top" Background="{StaticResource ButtonBackgroundBrush}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Add" Foreground="White"/>
+                        <TextBlock Margin="10" Foreground="White">Add Job</TextBlock>
+                    </StackPanel>
+                </Button>
+
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Active Jobs" Margin="10, 40, 10, 10" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Grid.Column="0" Margin="10" Width="75" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" >Completed</TextBlock>
+                    <TextBlock Grid.Column="0" Margin="10" Width="250" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" >Customer</TextBlock >
+                    <TextBlock Grid.Column="0" Margin="10" Width="75" HorizontalAlignment="Left" Style="{StaticResource SubtitleTextBlockStyle}" >Item</TextBlock>
                 </StackPanel>
 
-                <ListView Name="ListItems" Margin="62,10,0,0" Grid.Row="1">
+                <ListView Name="ListItems" VerticalAlignment="Stretch" SelectionMode="None" Grid.Row="2">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox Name="CheckBoxComplete" IsChecked="{Binding Complete, Mode=TwoWay}" Checked="CheckBoxComplete_Checked" Content="{Binding Text}" Margin="10,5" VerticalAlignment="Center"/>
-                            </StackPanel>
+                            <Border BorderBrush="{StaticResource TileBorderBrush}" BorderThickness="0,0,1,1" Padding="10" Background="{StaticResource TileBackgroundBrush}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <CheckBox  Grid.Column="0" Name="CheckBoxComplete" IsChecked="{Binding Completed, Mode=TwoWay}" Margin="20,5,0,0" VerticalAlignment="Top" Checked="CheckBoxComplete_Checked" />
+                                    <TextBlock Grid.Column="1" Text="{Binding MobileCustomerName}" Margin="0,10,10,0" VerticalAlignment="Top" Width="250" Height="20" />
+                                    <TextBox   Grid.Column="2" Name="TextOrderDetail" Text="{Binding Item, Mode=TwoWay}" Margin="10,5,10,0" VerticalAlignment="Top" LostFocus="TextOrderDetail_LostFocus" FontFamily="Global User Interface" />
+                                    <Button Grid.Column="3" Background="{StaticResource ButtonBackgroundBrush}" Click="ButtonSave_Click" HorizontalAlignment="Left" IsEnabled="False">
+                                        <StackPanel Orientation="Horizontal">
+                                            <SymbolIcon Symbol="Save" Foreground="White"/>
+                                            <TextBlock Margin="10" Foreground="White">Save</TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-
+                <Button Grid.Row="3" Margin="10,30,0,20" Name="ButtonSync" Background="{StaticResource ButtonBackgroundBrush}" Click="ButtonSync_Click" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Sync" Foreground="White"/>
+                        <TextBlock Margin="10" Foreground="White">Sync</TextBlock>
+                    </StackPanel>
+                </Button>
             </Grid>
-
         </Grid>
     </Grid>
 </Page>
