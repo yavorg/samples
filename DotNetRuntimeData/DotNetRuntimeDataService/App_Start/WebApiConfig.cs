@@ -81,7 +81,7 @@ namespace DotNetRuntimeDataService
 
     }
 
-    public class ExistingInitializer : DropCreateDatabaseIfModelChanges<ExistingContext>
+    public class ExistingInitializer : ClearDatabaseSchemaIfModelChanges<ExistingContext>
     {
         protected override void Seed(ExistingContext context)
         {
