@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetRuntimeDataService", "DotNetRuntimeDataService\DotNetRuntimeDataService.csproj", "{209FA716-A7AD-4095-BD70-C8710FC66FA7}"
 EndProject
@@ -13,7 +13,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0C64A0
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetRuntimeData", "DotNetRuntimeData", "{21D26046-4CCB-4F83-8449-FE56D3D740D0}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DotNetRuntimeData.Shared", "DotNetRuntimeData.Shared\DotNetRuntimeData.Shared.shproj", "{09CAAA08-BB3A-4B4B-9D45-CA97AC6DFBD8}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		DotNetRuntimeData.Shared\DotNetRuntimeData.Shared.projitems*{c8fca4e8-5e5b-4b79-95a9-a74383823fec}*SharedItemsImports = 4
+		DotNetRuntimeData.Shared\DotNetRuntimeData.Shared.projitems*{09caaa08-bb3a-4b4b-9d45-ca97ac6dfbd8}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -35,9 +43,9 @@ Global
 		{209FA716-A7AD-4095-BD70-C8710FC66FA7}.Release|ARM.ActiveCfg = Release|Any CPU
 		{209FA716-A7AD-4095-BD70-C8710FC66FA7}.Release|x64.ActiveCfg = Release|Any CPU
 		{209FA716-A7AD-4095-BD70-C8710FC66FA7}.Release|x86.ActiveCfg = Release|Any CPU
-		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|Any CPU.Build.0 = Debug|x86
-		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|Any CPU.Deploy.0 = Debug|x86
+		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|Any CPU.Build.0 = Debug|x64
+		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|Any CPU.Deploy.0 = Debug|x64
 		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|ARM.ActiveCfg = Debug|ARM
 		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|ARM.Build.0 = Debug|ARM
 		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -62,5 +70,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C8FCA4E8-5E5B-4B79-95A9-A74383823FEC} = {21D26046-4CCB-4F83-8449-FE56D3D740D0}
+		{09CAAA08-BB3A-4B4B-9D45-CA97AC6DFBD8} = {21D26046-4CCB-4F83-8449-FE56D3D740D0}
 	EndGlobalSection
 EndGlobal
