@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">MineCraftTracker</string>
+    <string name="mobile_services">Chest Items </string>
+    <string name="menu_refresh">Refresh</string>
+
+    <string name="item_description">Item decscription</string>
+    <string name="item_quantity">0</string>
+
+
+</resources>
