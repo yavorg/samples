@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,10 @@ import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
+
+import com.microsoft.windowsazure.notifications.NotificationsManager;
+import com.microsoft.windowsazure.mobileservices.notifications.Registration;
+import com.microsoft.windowsazure.mobileservices.notifications.RegistrationCallback;
 
 import java.net.MalformedURLException;
 
@@ -54,6 +59,11 @@ public class ToDoActivity extends Activity {
 	 */
 	private ProgressBar mProgressBar;
 
+    /**
+     * For notifications
+     */
+    public static final String SENDER_ID = Secrets.GoogleProjectNumber;
+
 	/**
 	 * Initializes the activity
 	 */
@@ -61,6 +71,8 @@ public class ToDoActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_to_do);
+
+        NotificationsManager.handleNotifications(this, SENDER_ID, PushHandler.class);
 		
 		mProgressBar = (ProgressBar) findViewById(R.id.loadingProgressBar);
 
@@ -84,12 +96,15 @@ public class ToDoActivity extends Activity {
 			mAdapter = new ToDoItemAdapter(this, R.layout.row_list_to_do);
 			ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
 			listViewToDo.setAdapter(mAdapter);
-		
+
 			// Load the items from the Mobile Service
 			refreshItemsFromTable();
 
 		} catch (MalformedURLException e) {
-			createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+			createAndShowDialog(
+                    new Exception(
+                            "There was an error creating the Mobile Service. Verify the URL"),
+                    "Error");
 		}
 	}
 	
@@ -200,14 +215,15 @@ public class ToDoActivity extends Activity {
 	 */
 	private void refreshItemsFromTable() {
 
-        // Get the items that weren't marked as completed and add them in the
-        // adapter
+        // Get the items that weren't marked as completed and
+        // add them in the adapter
         new AsyncTask<Void, Void, Void>(){
             @Override
             protected Void doInBackground(Void... params) {
                 try {
                     final MobileServiceList<ToDoItem> entities =
-                            mToDoTable.where().field("complete").eq(val(false)).execute().get();
+                            mToDoTable.where().field("complete").
+                                    eq(val(false)).execute().get();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -228,7 +244,37 @@ public class ToDoActivity extends Activity {
         }.execute();
 	}
 
-	/**
+    /**
+     * Registers mobile services client to receive GCM push notifications
+     * @param gcmRegistrationId The Google Cloud Messaging session Id returned
+     * by the call to GoogleCloudMessaging.register in NotificationsManager.handleNotifications
+     */
+    /*
+    public void registerForPush(final String gcmRegistrationId)
+    {
+        try {
+            mClient.getPush().register(gcmRegistrationId, null).get();
+        } catch (Exception e) {
+            createAndShowDialog(e, "Error");
+        }
+    }*/
+
+    public void registerForPush(String gcmRegistrationId)
+    {
+        mClient.getPush().register(gcmRegistrationId,null,new RegistrationCallback()
+        {
+            @Override
+            public void onRegister(Registration registration, Exception exception)
+            {
+                if (exception != null)
+                {
+                    // handle exception
+                }
+            }
+        });
+    }
+
+    /**
 	 * Creates a dialog and shows it
 	 *
 	 * @param exception
@@ -276,7 +322,9 @@ public class ToDoActivity extends Activity {
 
                 @Override
                 public void run() {
-                    if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.VISIBLE);
+                    if (mProgressBar != null){
+                        mProgressBar.setVisibility(ProgressBar.VISIBLE);
+                    }
                 }
             });
 
@@ -298,7 +346,9 @@ public class ToDoActivity extends Activity {
 
                         @Override
                         public void run() {
-                            if (mProgressBar != null) mProgressBar.setVisibility(ProgressBar.GONE);
+                            if (mProgressBar != null) {
+                                mProgressBar.setVisibility(ProgressBar.GONE);
+                            }
                         }
                     });
                 }
