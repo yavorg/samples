@@ -195,7 +195,6 @@ public class ItemsActivity extends Activity {
      * @param gcmRegistrationId The Google Cloud Messaging session Id returned
      * by the call to GoogleCloudMessaging.register in NotificationsManager.handleNotifications
      */
-    /*
     public void registerForPush(final String gcmRegistrationId)
     {
         try {
@@ -203,21 +202,6 @@ public class ItemsActivity extends Activity {
         } catch (Exception e) {
             createAndShowDialog(e, "Error");
         }
-    }*/
-
-    public void registerForPush(String gcmRegistrationId)
-    {
-        mClient.getPush().register(gcmRegistrationId,null,new RegistrationCallback()
-        {
-            @Override
-            public void onRegister(Registration registration, Exception exception)
-            {
-                if (exception != null)
-                {
-                    // handle exception
-                }
-            }
-        });
     }
 
     /**

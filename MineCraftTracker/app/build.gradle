@@ -21,10 +21,8 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:19.0.0'
     compile 'com.google.code.gson:gson:2.2.2'
-    compile files('libs/mobileservices-2.0.0-beta.jar')
     compile 'com.google.guava:guava:17.0'
     compile 'com.google.android.gms:play-services:5.+'
     compile files('libs/notifications-1.0.1.jar')
-    compile files('libs/notifications-1.0.1-sources.jar')
-    compile files('libs/notifications-1.0.1-javadoc.jar')
+    compile files('libs/mobileservices-2.0.1-beta.jar')
 }

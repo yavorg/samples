@@ -33,8 +33,8 @@ public class PushHandler extends NotificationsHandler {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(ctx)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("New Notification")
+                        .setSmallIcon(R.drawable.fire)
+                        .setContentTitle("MineCraft notification")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg);
