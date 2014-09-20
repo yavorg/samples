@@ -24,9 +24,5 @@ dependencies {
     compile 'com.google.guava:guava:17.0'
     compile 'com.google.android.gms:play-services:5.+'
     compile files('libs/notifications-1.0.1.jar')
-    compile files('libs/notifications-1.0.1-sources.jar')
-    compile files('libs/notifications-1.0.1-javadoc.jar')
-    compile files('libs/mobileservices-2.0.1-beta-javadoc.jar')
-    compile files('libs/mobileservices-2.0.1-beta-sources.jar')
     compile files('libs/mobileservices-2.0.1-beta.jar')
 }
