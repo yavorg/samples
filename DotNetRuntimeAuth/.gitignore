@@ -1,0 +1,8 @@
+*.exe
+bin
+obj
+libs
+*.suo
+packages
+App_Data
+PublishProfiles
