@@ -45,6 +45,7 @@ class ToDoItemAdapter extends ArrayAdapter<ToDoItem> {
 		}
 
 		row.setTag(currentItem);
+
 		final CheckBox checkBox = (CheckBox) row.findViewById(R.id.checkToDoItem);
 		checkBox.setText(currentItem.getText());
 		checkBox.setChecked(false);

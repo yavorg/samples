@@ -223,7 +223,7 @@ public class ToDoActivity extends Activity {
                 try {
                     final MobileServiceList<ToDoItem> entities =
                             mToDoTable.where().field("complete").
-                                    eq(val(false)).execute().get();
+                            eq(val(false)).execute().get();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

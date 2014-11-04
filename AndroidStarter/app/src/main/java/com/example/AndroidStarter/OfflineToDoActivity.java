@@ -31,6 +31,7 @@ import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServicePreconditionFailedExceptionBase;
 import com.microsoft.windowsazure.mobileservices.table.query.Query;
+import com.microsoft.windowsazure.mobileservices.table.query.QueryOrder;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
@@ -73,12 +74,6 @@ public class OfflineToDoActivity extends Activity {
 	 */
 	private ProgressBar mProgressBar;
 
-	/**
-	 * The position of the item which is being edited
-	 */
-	private int mEditedItemPosition = -1;
-
-	private static final int EDIT_ACTIVITY_REQUEST_CODE = 1234;
 
 	/**
 	 * Initializes the activity
@@ -127,20 +122,6 @@ public class OfflineToDoActivity extends Activity {
 			final ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
 			listViewToDo.setAdapter(mAdapter);
 
-			listViewToDo.setOnItemClickListener(new OnItemClickListener() {
-
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					Intent i = new Intent(getApplicationContext(), EditOfflineToDoActivity.class);
-					mEditedItemPosition = position;
-					ToDoItem item = mAdapter.getItem(position);
-					i.putExtra(EditOfflineToDoActivity.ITEM_COMPLETE_KEY, item.isComplete());
-					i.putExtra(EditOfflineToDoActivity.ITEM_TEXT_KEY, item.getText());
-					startActivityForResult(i, EDIT_ACTIVITY_REQUEST_CODE);
-				}
-			});
-
 			// Load the items from the Mobile Service
 			refreshItemsFromTable();
 
@@ -152,21 +133,6 @@ public class OfflineToDoActivity extends Activity {
 				t = t.getCause();
 			}
 			createAndShowDialog(new Exception("Unknown error: " + t.getMessage()), "Error");
-		}
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (requestCode == EDIT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && mEditedItemPosition >= 0) {
-			ToDoItem item = mAdapter.getItem(mEditedItemPosition);
-			String text = intent.getExtras().getString(EditOfflineToDoActivity.ITEM_TEXT_KEY);
-			boolean complete = intent.getExtras().getBoolean(EditOfflineToDoActivity.ITEM_COMPLETE_KEY);
-
-			if (!item.getText().equals(text) || item.isComplete() != complete) {
-				item.setText(text);
-				item.setComplete(complete);
-				updateItem(item);
-			}
 		}
 	}
 
@@ -206,13 +172,16 @@ public class OfflineToDoActivity extends Activity {
 		return true;
 	}
 
+
+
+
 	/**
 	 * Updates an item as completed
 	 * 
 	 * @param item
 	 *            The item to mark
 	 */
-	private void updateItem(final ToDoItem item) {
+	public void updateItem(final ToDoItem item) {
 		if (mClient == null) {
 			return;
 		}
@@ -225,9 +194,6 @@ public class OfflineToDoActivity extends Activity {
 					mToDoTable.update(item).get();
 					runOnUiThread(new Runnable() {
 						public void run() {
-							if (item.isComplete()) {
-								mAdapter.remove(item);
-							}
 							refreshItemsFromTable();
 						}
 					});
@@ -266,7 +232,7 @@ public class OfflineToDoActivity extends Activity {
 					if (!entity.isComplete()) {
 						runOnUiThread(new Runnable() {
 							public void run() {
-								mAdapter.add(entity);
+							    refreshItemsFromTable();
 							}
 						});
 					}
@@ -292,7 +258,8 @@ public class OfflineToDoActivity extends Activity {
 			@Override
 			protected Void doInBackground(Void... params) {
 				try {
-					final MobileServiceList<ToDoItem> result = mToDoTable.read(mPullQuery).get();
+					final MobileServiceList<ToDoItem> result =
+                            mToDoTable.read(mPullQuery).get();
 					runOnUiThread(new Runnable() {
 
 						@Override
