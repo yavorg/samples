@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import com.microsoft.windowsazure.notifications.NotificationsHandler;
 
-public class PushHandler extends NotificationsHandler {
+public class UIPushHandler extends NotificationsHandler {
     public static final int NOTIFICATION_ID = 1;
 
     @Override

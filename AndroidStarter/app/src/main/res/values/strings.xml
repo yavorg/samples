@@ -8,5 +8,14 @@
     <string name="checkbox_text">Item Text</string>
 
     <string name="title_activity_edit_to_do">Edit a ToDo Item</string>
+    <string name="offline_conflict">Conflict detected between changes you and other users have made.
+    Which version do you want to keep?</string>
+    <string name="offline_local">Keep mine</string>
+    <string name="offline_server">Keep server</string>
+    <string name="connection_error">Connection error</string>
+    <string name="push_error">Push registration error</string>
+    <string name="offline_error">Local store error</string>
+    <string name="conflict_error">Conflict resolution error</string>
+    <string name="create_error">There was an error creating the Mobile Service. Verify the URL.</string>
 
 </resources>

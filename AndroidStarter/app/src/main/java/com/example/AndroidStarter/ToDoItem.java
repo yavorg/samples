@@ -1,32 +1,39 @@
 package com.example.AndroidStarter;
 
+import junit.runner.Version;
+
 /**
  * Represents an item in a ToDo list
  */
 class ToDoItem {
+    public final static String Name = "ToDoItem";
+    public final static String TextPropertySerializedName = "text";
+    public final static String IdPropertySerializedName = "id";
+    public final static String CompletePropertySerializedName = "complete";
+    public final static String VersionPropertySerializedName = "version";
 
 	/**
 	 * Item text
 	 */
-	@com.google.gson.annotations.SerializedName("text")
+	@com.google.gson.annotations.SerializedName(TextPropertySerializedName)
 	private String mText;
 
 	/**
 	 * Item Id
 	 */
-	@com.google.gson.annotations.SerializedName("id")
+	@com.google.gson.annotations.SerializedName(IdPropertySerializedName)
 	private String mId;
 
 	/**
 	 * Indicates if the item is completed
 	 */
-	@com.google.gson.annotations.SerializedName("complete")
+	@com.google.gson.annotations.SerializedName(CompletePropertySerializedName)
 	private boolean mComplete;
 
     /**
      * The version of the item in the database
      */
-    @com.google.gson.annotations.SerializedName("__version")
+    @com.google.gson.annotations.SerializedName(VersionPropertySerializedName)
     private String mVersion;
 
 	/**

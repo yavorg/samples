@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <!--
+
         <receiver android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
@@ -25,22 +25,26 @@
                 <category android:name="com.example.AndroidStarter" />
             </intent-filter>
         </receiver>
-        -->
+        <service android:name="OfflinePushIntentService"></service>
+
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".ToDoActivity"
               android:label="@string/app_name">
-
-        </activity>
-        <activity android:name=".OfflineToDoActivity"
-            android:label="@string/app_name">
+            <!-- The default "online" activity is the default in the app. If you want to switch it
+            to the "offline" activity, move the next section inside the OfflineTodoActivity
+            section below. -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".OfflineToDoActivity" android:label="@string/app_name">
+        </activity>
+
 
     </application>
 

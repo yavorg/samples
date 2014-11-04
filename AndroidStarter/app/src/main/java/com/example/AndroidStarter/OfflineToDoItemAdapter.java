@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 /**
  * Adapter to bind a ToDoItem List to a view
@@ -74,7 +73,7 @@ public class OfflineToDoItemAdapter extends ArrayAdapter<ToDoItem> {
             public void onFocusChange(View arg0, boolean arg1){
 
                 // Lost focus
-                if (arg1 == false){
+                if (!arg1){
                     if (mContext instanceof OfflineToDoActivity) {
                         OfflineToDoActivity activity = (OfflineToDoActivity) mContext;
                         currentItem.setText(itemTextBox.getText().toString());

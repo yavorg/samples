@@ -4,17 +4,16 @@ package com.example.AndroidStarter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -22,6 +21,7 @@ import android.widget.ProgressBar;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.JsonObject;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.MobileServiceList;
@@ -31,16 +31,17 @@ import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServicePreconditionFailedExceptionBase;
 import com.microsoft.windowsazure.mobileservices.table.query.Query;
-import com.microsoft.windowsazure.mobileservices.table.query.QueryOrder;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncContext;
 import com.microsoft.windowsazure.mobileservices.table.sync.MobileServiceSyncTable;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.ColumnDataType;
+import com.microsoft.windowsazure.mobileservices.table.sync.localstore.MobileServiceLocalStoreException;
 import com.microsoft.windowsazure.mobileservices.table.sync.localstore.SQLiteLocalStore;
 import com.microsoft.windowsazure.mobileservices.table.sync.operations.RemoteTableOperationProcessor;
 import com.microsoft.windowsazure.mobileservices.table.sync.operations.TableOperation;
 import com.microsoft.windowsazure.mobileservices.table.sync.push.MobileServicePushCompletionResult;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandler;
 import com.microsoft.windowsazure.mobileservices.table.sync.synchandler.MobileServiceSyncHandlerException;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 public class OfflineToDoActivity extends Activity {
 
@@ -74,7 +75,6 @@ public class OfflineToDoActivity extends Activity {
 	 */
 	private ProgressBar mProgressBar;
 
-
 	/**
 	 * Initializes the activity
 	 */
@@ -82,8 +82,11 @@ public class OfflineToDoActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_offline_to_do);
-		
-		mProgressBar = (ProgressBar) findViewById(R.id.loadingProgressBar);
+
+        NotificationsManager.handleNotifications(this, Secrets.GoogleProjectNumber,
+                OfflinePushHandler.class);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.loadingProgressBar);
 
 		// Initialize the progress bar
 		mProgressBar.setVisibility(ProgressBar.GONE);
@@ -97,20 +100,9 @@ public class OfflineToDoActivity extends Activity {
                     this).withFilter(new ProgressFilter());
 
 			// Saves the query which will be used for pulling data
-			mPullQuery = mClient.getTable(ToDoItem.class).where().field("complete").eq(false);
+			mPullQuery = getQuery(mClient);
 
-			SQLiteLocalStore localStore = new SQLiteLocalStore(mClient.getContext(), "ToDoItem", null, 1);
-			MobileServiceSyncHandler handler = new ConflictResolvingSyncHandler();
-			MobileServiceSyncContext syncContext = mClient.getSyncContext();
-
-			Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
-			tableDefinition.put("id", ColumnDataType.String);
-			tableDefinition.put("text", ColumnDataType.String);
-			tableDefinition.put("complete", ColumnDataType.Boolean);
-			tableDefinition.put("__version", ColumnDataType.String);
-
-			localStore.defineTable("ToDoItem", tableDefinition);
-			syncContext.initialize(localStore, handler).get();
+            setUpLocalStoreWithHandler(mClient, new ConflictResolvingSyncHandler(this));
 
 			// Get the Mobile Service Table instance to use
 			mToDoTable = mClient.getSyncTable(ToDoItem.class);
@@ -126,15 +118,42 @@ public class OfflineToDoActivity extends Activity {
 			refreshItemsFromTable();
 
 		} catch (MalformedURLException e) {
-			createAndShowDialog(new Exception("There was an error creating the Mobile Service. Verify the URL"), "Error");
+			createAndShowDialog(
+                    new Exception(getResources().getString(R.string.create_error)),
+                    getResources().getString(R.string.connection_error));
 		} catch (Exception e) {
 			Throwable t = e;
 			while (t.getCause() != null) {
 				t = t.getCause();
 			}
-			createAndShowDialog(new Exception("Unknown error: " + t.getMessage()), "Error");
+			createAndShowDialog(new Exception(t.getMessage()),
+                    getResources().getString(R.string.connection_error));
 		}
 	}
+
+    static Query getQuery(MobileServiceClient client){
+        return client.getTable(ToDoItem.class).where()
+                .field(ToDoItem.CompletePropertySerializedName).eq(false);
+    }
+
+    static void setUpLocalStoreWithHandler(MobileServiceClient client,
+                                           MobileServiceSyncHandler handler)
+            throws ExecutionException, InterruptedException, MobileServiceLocalStoreException {
+        SQLiteLocalStore localStore = new SQLiteLocalStore(client.getContext(),
+                ToDoItem.Name, null, 1);
+        MobileServiceSyncContext syncContext = client.getSyncContext();
+
+        Map<String, ColumnDataType> tableDefinition = new HashMap<String, ColumnDataType>();
+        tableDefinition.put(ToDoItem.IdPropertySerializedName, ColumnDataType.String);
+        tableDefinition.put(ToDoItem.TextPropertySerializedName, ColumnDataType.String);
+        tableDefinition.put(ToDoItem.CompletePropertySerializedName, ColumnDataType.Boolean);
+        tableDefinition.put(ToDoItem.VersionPropertySerializedName, ColumnDataType.String);
+
+        localStore.defineTable(ToDoItem.Name, tableDefinition);
+        syncContext.initialize(localStore, handler).get();
+
+    }
+
 
 	/**
 	 * Initializes the activity menu
@@ -161,7 +180,8 @@ public class OfflineToDoActivity extends Activity {
 						mToDoTable.pull(mPullQuery).get();
 						refreshItemsFromTable();
 					} catch (Exception exception) {
-						createAndShowDialog(exception, "Error");
+						createAndShowDialog(exception,
+                                getResources().getString(R.string.connection_error));
 					}
 					return null;
 				}
@@ -198,7 +218,7 @@ public class OfflineToDoActivity extends Activity {
 						}
 					});
 				} catch (Exception exception) {
-					createAndShowDialog(exception, "Error");
+					createAndShowDialog(exception, getResources().getString(R.string.offline_error));
 				}
 				return null;
 			}
@@ -237,7 +257,7 @@ public class OfflineToDoActivity extends Activity {
 						});
 					}
 				} catch (Exception exception) {
-					createAndShowDialog(exception, "Error");
+					createAndShowDialog(exception, getResources().getString(R.string.offline_error));
 				}
 				return null;
 			}
@@ -272,12 +292,26 @@ public class OfflineToDoActivity extends Activity {
 						}
 					});
 				} catch (Exception exception) {
-					createAndShowDialog(exception, "Error");
+					createAndShowDialog(exception, getResources().getString(R.string.offline_error));
 				}
 				return null;
 			}
 		}.execute();
 	}
+
+    /**
+     * Registers mobile services client to receive GCM push notifications
+     * @param gcmRegistrationId The Google Cloud Messaging session Id returned
+     * by the call to GoogleCloudMessaging.register in NotificationsManager.handleNotifications
+     */
+    public void registerForPush(final String gcmRegistrationId)
+    {
+        try {
+            mClient.getPush().register(gcmRegistrationId, null).get();
+        } catch (Exception e) {
+            createAndShowDialog(e, getResources().getString(R.string.push_error));
+        }
+    }
 
 	/**
 	 * Creates a dialog and shows it
@@ -332,7 +366,7 @@ public class OfflineToDoActivity extends Activity {
 				public void onFailure(Throwable exc) {
 					dismissProgressBar();
 				}
-				
+
 				@Override
 				public void onSuccess(ServiceFilterResponse resp) {
 					dismissProgressBar();
@@ -355,42 +389,90 @@ public class OfflineToDoActivity extends Activity {
 
 	private class ConflictResolvingSyncHandler implements MobileServiceSyncHandler {
 
+        private Context base;
+
+        public ConflictResolvingSyncHandler(Context base){
+            this.base = base;
+        }
+
+        public ListenableFuture<JsonObject> resolveConflict(
+                final RemoteTableOperationProcessor processor,
+                final TableOperation operation) {
+
+            final SettableFuture<JsonObject> res = SettableFuture.create();
+            MobileServicePreconditionFailedExceptionBase ex;
+
+            try {
+                res.set(operation.accept(processor));
+                // Operation went through, just return
+                return res;
+            } catch (MobileServicePreconditionFailedExceptionBase e) {
+                ex = e;
+            } catch (Throwable e) {
+                ex = (MobileServicePreconditionFailedExceptionBase) e.getCause();
+            }
+
+            if (ex != null) {
+
+                String itemId = operation.getItemId();
+                String operationName = operation.getTableName();
+                try {
+                    JsonObject localItem = mClient.getSyncTable(operationName).lookUp(itemId).get();
+                    JsonObject serverItem = ex.getValue();
+                    if (serverItem == null) {
+                        // Item not returned in the exception, retrieving it from the server
+                        serverItem = mClient.getTable(operationName).lookUp(itemId).get();
+                    }
+
+                    if (serverItem.getAsJsonPrimitive(ToDoItem.CompletePropertySerializedName)
+                            .equals(localItem.getAsJsonPrimitive(ToDoItem.CompletePropertySerializedName)) &&
+                            serverItem.getAsJsonPrimitive(ToDoItem.TextPropertySerializedName)
+                                    .equals(localItem.getAsJsonPrimitive(ToDoItem.TextPropertySerializedName))){
+
+                        // Items are same so we can ignore the conflict
+                        res.set(serverItem);
+                        return res;
+                    }
+
+                    OfflineConflictDialogFragment dialog = new OfflineConflictDialogFragment();
+                    dialog.show(((Activity) base).getFragmentManager(), "dialog");
+                    int choice = dialog.get();
+
+                    if(choice == R.string.offline_local){
+                        // Overwrite the server version and try the operation again by continuing
+                        JsonObject item = processor.getItem();
+                        item.addProperty(ToDoItem.VersionPropertySerializedName,
+                                serverItem.getAsJsonPrimitive(ToDoItem.VersionPropertySerializedName)
+                                        .getAsString());
+                        processor.setItem(item);
+                        return resolveConflict(processor, operation);
+
+                    } else if (choice == R.string.offline_server){
+                        // Return the server item to indicate that's the one you want
+                        res.set(serverItem);
+                        return res;
+                    }
+
+                } catch (Exception e) {
+                    createAndShowDialog(e, getResources().getString(R.string.conflict_error));
+                }
+
+            }
+
+            return null;
+        }
+
 		@Override
 		public JsonObject executeTableOperation(
 				RemoteTableOperationProcessor processor, TableOperation operation)
-				throws MobileServiceSyncHandlerException {
-
-			MobileServicePreconditionFailedExceptionBase ex = null;
-			JsonObject result = null;
-			try {
-				result = operation.accept(processor);
-			} catch (MobileServicePreconditionFailedExceptionBase e) {
-				ex = e;
-			} catch (Throwable e) {
-				ex = (MobileServicePreconditionFailedExceptionBase) e.getCause();
-			}
-
-			if (ex != null) {
-				// A conflict was detected; let's force the server to "win"
-				// by discarding the client version of the item
-				// Other policies could be used, such as prompt the user for
-				// which version to maintain.
-				JsonObject serverItem = ex.getValue();
-
-				if (serverItem == null) {
-					// Item not returned in the exception, retrieving it from the server
-					try {
-						serverItem = mClient.getTable(operation.getTableName()).lookUp(operation.getItemId()).get();
-					} catch (Exception e) {
-						throw new MobileServiceSyncHandlerException(e);
-					}
-				}
-
-				result = serverItem;
-			}
-
-			return result;
-		}
+        {
+            try {
+                return resolveConflict(processor, operation).get();
+            } catch (Exception e){
+                createAndShowDialog(e, getResources().getString(R.string.conflict_error));
+                return null;
+            }
+        }
 
 		@Override
 		public void onPushComplete(MobileServicePushCompletionResult result)

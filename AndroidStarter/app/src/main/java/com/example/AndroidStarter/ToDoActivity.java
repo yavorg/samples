@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +21,7 @@ import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.microsoft.windowsazure.mobileservices.table.MobileServiceTable;
-
 import com.microsoft.windowsazure.notifications.NotificationsManager;
-import com.microsoft.windowsazure.mobileservices.notifications.Registration;
-import com.microsoft.windowsazure.mobileservices.notifications.RegistrationCallback;
 
 import java.net.MalformedURLException;
 
@@ -59,11 +55,6 @@ public class ToDoActivity extends Activity {
 	 */
 	private ProgressBar mProgressBar;
 
-    /**
-     * For notifications
-     */
-    public static final String SENDER_ID = Secrets.GoogleProjectNumber;
-
 	/**
 	 * Initializes the activity
 	 */
@@ -72,8 +63,9 @@ public class ToDoActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_to_do);
 
-        NotificationsManager.handleNotifications(this, SENDER_ID, PushHandler.class);
-		
+        NotificationsManager.handleNotifications(this, Secrets.GoogleProjectNumber,
+                UIPushHandler.class);
+
 		mProgressBar = (ProgressBar) findViewById(R.id.loadingProgressBar);
 
 		// Initialize the progress bar
@@ -101,10 +93,8 @@ public class ToDoActivity extends Activity {
 			refreshItemsFromTable();
 
 		} catch (MalformedURLException e) {
-			createAndShowDialog(
-                    new Exception(
-                            "There was an error creating the Mobile Service. Verify the URL"),
-                    "Error");
+			createAndShowDialog(new Exception(getResources().getString(R.string.create_error)),
+                    getResources().getString(R.string.connection_error));
 		}
 	}
 	
@@ -157,7 +147,7 @@ public class ToDoActivity extends Activity {
                             }
                         });
                     } catch (Exception e){
-                        createAndShowDialog(e, "Error");
+                        createAndShowDialog(e, getResources().getString(R.string.connection_error));
 
                     }
 
@@ -198,7 +188,7 @@ public class ToDoActivity extends Activity {
                         }
                     });
                 } catch (Exception e){
-                    createAndShowDialog(e, "Error");
+                    createAndShowDialog(e, getResources().getString(R.string.connection_error));
 
                 }
 
@@ -222,7 +212,7 @@ public class ToDoActivity extends Activity {
             protected Void doInBackground(Void... params) {
                 try {
                     final MobileServiceList<ToDoItem> entities =
-                            mToDoTable.where().field("complete").
+                            mToDoTable.where().field(ToDoItem.CompletePropertySerializedName).
                             eq(val(false)).execute().get();
                     runOnUiThread(new Runnable() {
                         @Override
@@ -235,7 +225,7 @@ public class ToDoActivity extends Activity {
                         }
                     });
                 } catch (Exception e){
-                    createAndShowDialog(e, "Error");
+                    createAndShowDialog(e, getResources().getString(R.string.connection_error));
 
                 }
 
@@ -254,7 +244,7 @@ public class ToDoActivity extends Activity {
         try {
             mClient.getPush().register(gcmRegistrationId, null).get();
         } catch (Exception e) {
-            createAndShowDialog(e, "Error");
+            createAndShowDialog(e, getResources().getString(R.string.push_error));
         }
     }
 
